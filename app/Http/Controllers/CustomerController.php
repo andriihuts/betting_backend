@@ -87,7 +87,7 @@ class CustomerController extends Controller
                             $amount =  round($real_money * $multiplier, 2);
                         }else if($sel_new_bet->status == 0){
                             $amount =  round($real_money * ($sel_new_bet->odds - 1) * (-1)*$multiplier, 2);
-                        }                        
+                        }
                     }
                     switch ($sel_new_bet->currency) {
                         case 'm-(OSRS)':
@@ -154,176 +154,6 @@ class CustomerController extends Controller
     }
     //Get the all customers for customer page
     public function getCustomers(Request $request)
-    {
-        // Fetch customers with necessary relationships
-        $all_Customers = Customer::with(['new_bets.bet_splitters'])->where('flag', 1)->orderBy('name', 'ASC')->get();
-        
-        // Initialize totals and response data arrays
-        $customer_json_data = [];
-        $total_sports = 0;
-
-        foreach ($all_Customers as $key => $customer) {
-            $total_perfect_money = 0;
-            $total_game_money = 0;
-            $total_cad_money = 0;
-            $total_rs_money = 0;
-            $sel_new_bets = $customer->new_bets;  
-            
-            if(sizeof($sel_new_bets)){
-                foreach ($sel_new_bets as $key1=>$sel_new_bet) {                   
-                    if($sel_new_bet->status == 2 ) continue;
-                    $each_splitter_money = $sel_new_bet->bet_splitters->sum('amount');                    
-                    $real_money = (float)$sel_new_bet->amount - $each_splitter_money;
-                    
-                    $multiplier = $sel_new_bet->rate;
-                    $amount = 0;
-                    if (!empty($sel_new_bet) && $sel_new_bet->live==1) { // live bet conditions                                            
-                        if($sel_new_bet->status == 1){
-                            $amount =  round($real_money * $multiplier, 2);
-                        }else if($sel_new_bet->status == 0){
-                            //$amount =  round(($real_money * $sel_new_bet->odds * 0.95 - $real_money) * (-1)*$multiplier, 2);
-                            $amount =  round($real_money * ($sel_new_bet->odds - 1) * (-1)*$multiplier, 2);
-                        }else{
-                            $amount = 0;
-                        }                            
-                        switch ($sel_new_bet->currency) {
-                            case 'm-(OSRS)':
-                                $total_game_money += $amount;
-                                break;
-                            case 'c-(CAD)':
-                                $total_cad_money += $amount;
-                                break;
-                            case 'r-(RS3)':
-                                $total_rs_money += $amount;
-                                break;
-                            default:
-                                $total_perfect_money += $amount;
-                                break;
-                        }
-                        
-                    } else if(!empty($sel_new_bet) && $sel_new_bet->live==0) { // non-live bet conditions
-                        if($sel_new_bet->status == 1){
-                            $amount =  round($real_money * $multiplier, 2);
-                        }else if($sel_new_bet->status == 0){
-                            $amount =  round($real_money * ($sel_new_bet->odds - 1) * (-1)*$multiplier, 2);
-                        }
-                                             
-                        // Log::info('live==0 && status ==1', ['validator1111' => $amount, 'sel_new_bet' => $sel_new_bet, 
-                        //                     'money status' => $sel_new_bet->status, 'money odds' => $sel_new_bet->odds, 'money real_money' => $real_money,
-                        //                     'money multiplier' => $multiplier  ]);
-                        switch ($sel_new_bet->currency) {
-                            case 'm-(OSRS)':
-                                $total_game_money += $amount;
-                                break;
-                            case 'c-(CAD)':
-                                $total_cad_money += $amount;
-                                break;
-                            case 'r-(RS3)':
-                                $total_rs_money += $amount;
-                                break;
-                            default:
-                                $total_perfect_money += $amount;
-                                break;
-                        }
-                    }
-                    //Log::info('amount list here', ['amounts list' => $amount]);                    
-                }
-            }else{
-                $total_perfect_money = 0;
-                $total_game_money = 0;
-            }
-
-            // Store customer data for JSON response
-            $customer_json_data[$key] = [
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'total_perfect' => round($total_perfect_money, 2),
-                'total_game' => round($total_game_money, 2),
-                'total_cad' => round($total_cad_money, 2),
-                'total_rs3' => round($total_rs_money, 2),
-                'a_apply_pay' => $customer->a_apply_pay,
-                'b_bitcoin' => $customer->b_bitcoin,
-                'e_ethereum' => $customer->e_ethereum,
-                'c_card' => $customer->c_card,
-                'u_usdt' => $customer->u_usdt,
-                'r_rs3' => $customer->r_rs3,
-                'm_game_currency' => $customer->m_game_currency,
-            ];
-
-            // Update total sports
-            $total_sports += $customer_json_data[$key]['total_perfect'] + 
-                            $customer_json_data[$key]['total_game'] + 
-                            $customer_json_data[$key]['total_cad'];      
-            Log::info('total_sports', ['total_sports' => $total_sports]);                      
-        }
-
-        // Retrieve or initialize net_money and irc_money values
-        $net_money = NetIRC::orderBy('created_at', 'desc')->first();
-        $net_money_value = $net_money->net ?? $total_sports;
-        $irc_money_value = $net_money->irc ?? 0;
-
-        // If no net_money record exists, save a new one
-        if (!$net_money) {
-            NetIRC::create(['net' => $total_sports, 'irc' => 0]);
-        }
-
-        // Return response with calculated data
-        return response()->json([
-            'customer' => $customer_json_data,
-            'total' => round($total_sports, 2),
-            'net' => $net_money_value,
-            'irc' => $irc_money_value,
-        ]);
-    }
-
-    //Get the all customers for customer page
-    public function getCustomerNames(Request $request)
-    {
-        $all_Customers = Customer::orderBy('name', 'ASC')->get();
-
-        foreach($all_Customers as $key=>$all_Customer){
-            $host_json_data[$key]['id'] = $all_Customer->id;
-            $host_json_data[$key]['name'] = $all_Customer->name;
-        }
-        return response()->json(
-            [
-                $host_json_data
-            ]
-        );
-    }
-    //Get the all hosts's list and profit
-    public function getSplitters(Request $request)
-    {
-        $all_hosts = Customer::where('flag', 0)->orderBy('name', 'ASC')->get();
-        $host_json_data = [];        
-        
-
-        foreach($all_hosts as $key_splitter=>$customer){       
-            $customer_current = (float)$customer->a_apply_pay + (float)$customer->b_bitcoin 
-                          + (float)$customer->e_ethereum + (float)$customer->u_usdt;     
-            //$sel_new_bets = $customer->new_bets;            
-            $host_json_data[$key_splitter] = [
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'total_perfect' => round($customer_current, 2),
-                'total_game' => round((float)$customer->m_game_currency, 2),
-                'total_cad' => round((float)$customer->c_card, 2),
-                'total_rs3' => round((float)$customer->r_rs3, 2),
-                'a_apply_pay' => $customer->a_apply_pay,
-                'b_bitcoin' => $customer->b_bitcoin,
-                'e_ethereum' => $customer->e_ethereum,
-                'c_card' => $customer->c_card,
-                'u_usdt' => $customer->u_usdt,
-                'r_rs3' => $customer->r_rs3,
-                'm_game_currency' => $customer->m_game_currency
-            ];
-        }
-
-        return response()->json(['hosts' => $host_json_data]);        
-    }
-
-    //get Customers and splitter Data
-    public function getCustomerAndSplitterData(Request $request)
     {
         // Eager load relationships to minimize queries
         $customers = Customer::with(['new_bets.bet_splitters'])
@@ -432,9 +262,177 @@ class CustomerController extends Controller
             NetIRC::create(['net' => $total_sports, 'irc' => 0]);
         }
 
+
         // Return combined response
         return response()->json([
-            'customers' => array_merge($customer_data, $host_data),
+            'customers' => $customer_data,
+            'hosts' => $host_data,
+            'total' => round($total_sports, 2),
+            'net' => $net_money_value,
+            'irc' => $irc_money_value,
+        ]);
+    }
+
+    //Get the all customers for customer page
+    public function getCustomerNames(Request $request)
+    {
+        $all_Customers = Customer::orderBy('name', 'ASC')->get();
+
+        foreach($all_Customers as $key=>$all_Customer){
+            $host_json_data[$key]['id'] = $all_Customer->id;
+            $host_json_data[$key]['name'] = $all_Customer->name;
+        }
+        return response()->json(
+            [
+                $host_json_data
+            ]
+        );
+    }
+    //Get the all hosts's list and profit
+    public function getSplitters(Request $request)
+    {
+        $all_hosts = Customer::where('flag', 0)->orderBy('name', 'ASC')->get();
+        $host_json_data = [];        
+        
+
+        foreach($all_hosts as $key_splitter=>$customer){       
+            $customer_current = (float)$customer->a_apply_pay + (float)$customer->b_bitcoin 
+                          + (float)$customer->e_ethereum + (float)$customer->u_usdt;     
+            //$sel_new_bets = $customer->new_bets;            
+            $host_json_data[$key_splitter] = [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'total_perfect' => round($customer_current, 2),
+                'total_game' => round((float)$customer->m_game_currency, 2),
+                'total_cad' => round((float)$customer->c_card, 2),
+                'total_rs3' => round((float)$customer->r_rs3, 2),
+                'a_apply_pay' => $customer->a_apply_pay,
+                'b_bitcoin' => $customer->b_bitcoin,
+                'e_ethereum' => $customer->e_ethereum,
+                'c_card' => $customer->c_card,
+                'u_usdt' => $customer->u_usdt,
+                'r_rs3' => $customer->r_rs3,
+                'm_game_currency' => $customer->m_game_currency
+            ];
+        }
+
+        return response()->json(['hosts' => $host_json_data]);        
+    }
+
+    //get Customers and splitter Data
+    public function getCustomerAndSplitterData(Request $request)
+    {
+        // Eager load relationships to minimize queries
+        $customers = Customer::with(['new_bets.bet_splitters'])
+            ->whereIn('flag', [0, 1]) // Fetch both customers and splitters in one query
+            ->orderBy('name', 'ASC')
+            ->get();
+
+        // Separate customers and splitters
+        $customer_data = [];
+        $host_data = [];
+        $total_sports = 0;
+
+        foreach ($customers as $customer) {
+                        
+            // Customer (flag = 1)
+            $totals = [
+                'perfect' => 0,
+                'game' => 0,
+                'cad' => 0,
+                'rs' => 0,
+            ];
+
+            if ($customer->flag == 1) {
+                foreach ($customer->new_bets as $bet) {
+                    if ($bet->status == 2) continue; // Skip bets with status 2
+
+                    $splitter_sum = $bet->bet_splitters->sum('amount');
+                    $real_money = (float)$bet->amount - $splitter_sum;
+                    $multiplier = $bet->rate;
+                    $amount = 0;
+
+                    if ($bet->status == 1) {
+                        $amount = round($real_money * $multiplier, 2);
+                    } elseif ($bet->status == 0) {
+                        $amount = round($real_money * ($bet->odds - 1) * (-1) * $multiplier, 2);
+                    }
+                    
+                    // Assign to appropriate currency total
+                    switch ($bet->currency) {
+                        case 'm-(OSRS)':
+                            $totals['game'] += $amount;
+                            break;
+                        case 'c-(CAD)':
+                            $totals['cad'] += $amount;
+                            break;
+                        case 'r-(RS3)':
+                            $totals['rs'] += $amount;
+                            break;
+                        default:
+                            $totals['perfect'] += $amount;
+                            break;
+                    }
+                }
+                
+                $total_sports += array_sum($totals);
+                Log::info('total_sports', ['total_sports' => $total_sports]);
+            }
+
+            $customer_data[] = [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'total_perfect' => round($totals['perfect'], 2),
+                'total_game' => round($totals['game'], 2),
+                'total_cad' => round($totals['cad'], 2),
+                'total_rs3' => round($totals['rs'], 2),
+                'a_apply_pay' => $customer->a_apply_pay,
+                'b_bitcoin' => $customer->b_bitcoin,
+                'e_ethereum' => $customer->e_ethereum,
+                'c_card' => $customer->c_card,
+                'u_usdt' => $customer->u_usdt,
+                'r_rs3' => $customer->r_rs3,
+                'm_game_currency' => $customer->m_game_currency,
+            ];
+
+            if ($customer->flag == 0) {
+                $host_data[] = [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'total_perfect' => round(
+                        (float)$customer->a_apply_pay +
+                            (float)$customer->b_bitcoin +
+                            (float)$customer->e_ethereum +
+                            (float)$customer->u_usdt,
+                        2
+                    ),
+                    'total_game' => round((float)$customer->m_game_currency, 2),
+                    'total_cad' => round((float)$customer->c_card, 2),
+                    'total_rs3' => round((float)$customer->r_rs3, 2),
+                    'a_apply_pay' => $customer->a_apply_pay,
+                    'b_bitcoin' => $customer->b_bitcoin,
+                    'e_ethereum' => $customer->e_ethereum,
+                    'c_card' => $customer->c_card,
+                    'u_usdt' => $customer->u_usdt,
+                    'r_rs3' => $customer->r_rs3,
+                    'm_game_currency' => $customer->m_game_currency,
+                ];
+            }
+        }
+
+        // Fetch or initialize net and IRC values
+        $net_money = NetIRC::orderBy('created_at', 'desc')->first();
+        $net_money_value = $net_money->net ?? $total_sports;
+        $irc_money_value = $net_money->irc ?? 0;
+
+        if (!$net_money) {
+            NetIRC::create(['net' => $total_sports, 'irc' => 0]);
+        }
+
+
+        // Return combined response
+        return response()->json([
+            'customers' => $customer_data,
             'hosts' => $host_data,
             'total' => round($total_sports, 2),
             'net' => $net_money_value,

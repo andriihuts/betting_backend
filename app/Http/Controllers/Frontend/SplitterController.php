@@ -127,9 +127,17 @@ class SplitterController extends Controller
             NetIRC::create(['net' => $total_sports, 'irc' => 0]);
         }
 
+        // Merge the arrays
+        $merged_data = array_merge($customer_data, $host_data);
+
+        // Sort the merged array by the 'name' field
+        usort($merged_data, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
         // Return combined response
         return response()->json([
-            'customers' => array_merge($customer_data, $host_data),
+            'customers' => $merged_data,
             'hosts' => $host_data,
             'total' => round($total_sports, 2),
             'net' => $net_money_value,

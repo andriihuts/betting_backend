@@ -132,13 +132,14 @@ class CustomerController extends Controller
         //     'net' => $net_money_value,
         //     'irc' => $irc_money_value,
         // ]);
-        $customers = array_merge($customer_data, $host_data);
+
+        $customers = $customer_data;
         $hosts = $host_data;
         $total = round($total_sports, 2);
         $net = $net_money_value;
         $irc = $irc_money_value;
 
-        return view('customers', compact('customers', 'customers', 'hosts', 'total', 'net', 'irc'));
+        return view('customers', compact('customers', 'hosts', 'total', 'net', 'irc'));
     }
 
      /**

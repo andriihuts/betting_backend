@@ -55,8 +55,6 @@ class HomeController extends Controller
                         }else if($sel_new_bet->status == 0){
                             $amount =  round($real_money * ($sel_new_bet->odds - 1) * (-1)*$multiplier, 2);
                         }                        
-                    }else{
-                        $amount = 0;
                     }
                     switch ($sel_new_bet->currency) {
                         case 'm-(OSRS)':
@@ -71,7 +69,8 @@ class HomeController extends Controller
                         default:
                             $total_perfect_money += $amount;
                             break;
-                    }                    
+                    }   
+                    $amount = 0;                 
                 }
             }else{
                 $total_perfect_money = 0;
