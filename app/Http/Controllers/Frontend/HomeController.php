@@ -3,16 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Customer;
-use App\Models\Splitter;
-use App\Models\NewBet;
 use App\Models\NetIRC;
-use App\Models\Transaction;
-use App\Models\Currency;
-
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -115,76 +107,7 @@ class HomeController extends Controller
         $net = round($net_money_value, 2);
         $irc = $irc_money_value;
         $customer = $customer_json_data;
-        
-        // $yearlyData = [
-        //     'labels' => ['2023', '2024', '2025'], // Years
-        //     'data' => [1500, 1800, 2000],         // Sample yearly data
-        // ];
-        
-        // $monthlyData = [
-        //     'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Months
-        //     'data' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230], // Sample monthly data
-        // ];
-        
-        // $dailyData = [
-        //     'labels' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], // Days of the week
-        //     'data' => [50, 60, 70, 80, 90, 100, 110],                     // Sample daily data
-        // ];
-        
-        // Generate yearly data
-        // 1. Generate Yearly Data (with empty years if not found)
-        $yearlyData = NetIRC::selectRaw('YEAR(created_at) as year, SUM(net) as total_net')
-        ->groupBy('year')
-        ->orderBy('year')
-        ->get()
-            ->pluck('total_net', 'year');
 
-        $years = range(now()->year - 2, now()->year); // Show 3 years: current year, previous, and one before that
-        $yearlyDataFormatted = [
-            'labels' => $years,
-            'data' => array_map(function ($year) use ($yearlyData) {
-                return $yearlyData[$year] ?? 0; // Provide 0 if the year data does not exist
-            }, $years),
-        ];
-
-        // 2. Generate Monthly Data (with empty months if not found)
-        $currentYear = now()->year;
-        $monthlyData = NetIRC::selectRaw('MONTH(created_at) as month, SUM(net) as total_net')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->pluck('total_net', 'month');
-
-        $months = range(1, 12); // 1 to 12 for all months of the year
-        $monthlyDataFormatted = [
-            'labels' => array_map(function ($month) {
-                return date('M', mktime(0, 0, 0, $month, 10)); // Convert month number to string
-            }, $months),
-            'data' => array_map(function ($month) use ($monthlyData) {
-                return $monthlyData[$month] ?? 0; // Provide 0 if the month data does not exist
-            }, $months),
-        ];
-
-        // 3. Generate Daily Data (with empty days if not found)
-        $dailyData = NetIRC::selectRaw('DAYOFWEEK(created_at) as day, SUM(net) as total_net')
-            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->groupBy('day')
-            ->orderBy('day')
-            ->get()
-            ->pluck('total_net', 'day');
-
-        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Days of the week (1 = Sunday, 7 = Saturday)
-        $dailyDataFormatted = [
-            'labels' => array_map(function ($day) {
-                return date('D', strtotime("Sunday +{$day} days")); // Get weekday name
-            }, $daysOfWeek),
-            'data' => array_map(function ($day) use ($dailyData) {
-                return $dailyData[$day] ?? 0; // Provide 0 if the day data does not exist
-            }, $daysOfWeek),
-        ];
-
-        //return view('dashboard', compact('customer', 'total', 'net', 'irc', 'yearlyData', 'monthlyData', 'dailyData'));
-        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted'));
+        return view('dashboard', compact('customer', 'total', 'net', 'irc'));
     }
 }
