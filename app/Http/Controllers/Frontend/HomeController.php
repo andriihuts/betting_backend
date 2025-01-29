@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\NetIRC;
+use App\Models\Coin;
+use App\Models\Website;
 
 class HomeController extends Controller
 {
@@ -13,6 +15,8 @@ class HomeController extends Controller
         
         // Fetch customers with necessary relationships
         $all_Customers = Customer::with(['new_bets.bet_splitters'])->orderBy('name', 'ASC')->get();
+        $all_coins = Coin::orderBy('name', 'ASC')->get();
+        $all_websites = Website::orderBy('name', 'ASC')->get();
         
         // Initialize totals and response data arrays
         $customer_json_data = [];
@@ -108,6 +112,6 @@ class HomeController extends Controller
         $irc = $irc_money_value;
         $customer = $customer_json_data;
 
-        return view('dashboard', compact('customer', 'total', 'net', 'irc'));
+        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites'));
     }
 }

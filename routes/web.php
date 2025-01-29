@@ -6,7 +6,9 @@ use App\Http\Controllers\Frontend\CustomerController;
 use App\Http\Controllers\Frontend\CurrencyController;
 use App\Http\Controllers\Frontend\NewBetController;
 use App\Http\Controllers\Frontend\SplitterController;
-
+use App\Http\Controllers\Frontend\CoinController;
+use App\Http\Controllers\Frontend\WebsiteController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\Frontend\TabController;
 use App\Http\Controllers\Frontend\PaymentController;
 /*
@@ -63,6 +65,22 @@ Route::group(['namespace' => 'Frontend'], function () {
 
     // Currency routes
     Route::get('currency/rate', [CurrencyController::class, 'getCurrencyRate'])->name('currency_all');                  // show currency rate page
-    Route::post('currency_rate/{type}', [CurrencyController::class, 'update_rate'])->name('currency_store_type');        // update the currency rate
+    Route::post('currency_rate/{type}', [CurrencyController::class, 'update_rate'])->name('currency_store_type');       // update the currency rate
     Route::get('currencies', [CurrencyController::class, 'showCurrencies'])->name('currency_get_data');                 // get the currency data
+
+    // Coins Routes    
+    Route::get('coins', [CoinController::class, 'index'])->name('coins');                                               // show the coins page
+    Route::post('coins/store', [CoinController::class, 'store'])->name('coin_store');                                   // register new coin    
+    Route::post('coins/update', [CoinController::class, 'update'])->name('coin_update');                                // update the coin
+    Route::post('coins/destory', [CoinController::class, 'destory'])->name('coin_destory');                             // remove the coin
+    Route::get('coins/{coin_id}', [CoinController::class, 'singleCoin'])->name('coin_show_single');                     //display single coin    
+
+    // Websites Routes  
+    Route::get('websites', [WebsiteController::class, 'index'])->name('websites');                                      // show the coins page
+    Route::post('websites/store', [WebsiteController::class, 'store'])->name('website_store');                          // register new customer    
+    Route::post('websites/update', [WebsiteController::class, 'update'])->name('website_update');                       // update the customer
+    Route::post('websites/destory', [WebsiteController::class, 'destory'])->name('website_destory');                    // remove the customer
+    Route::get('websites/{website_id}', [WebsiteController::class, 'singleWebsite'])->name('website_show_single');      //display single coin   
+
+    Route::post('/upload', [FileController::class, 'upload'])->name('upload');
 });

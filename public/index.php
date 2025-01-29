@@ -53,3 +53,4 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
+// echo shell_exec('php artisan storage:link 2>&1');

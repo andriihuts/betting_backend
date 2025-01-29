@@ -39,7 +39,7 @@
           </div>
           <div class="col-auto my-auto">
             <div class="h-100">
-              <h5 class="mb-1"> Setting Currency </h5>              
+              <h5 class="mb-1"> Currency </h5>              
             </div>
           </div>          
         </div>

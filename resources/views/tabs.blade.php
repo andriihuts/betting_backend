@@ -55,7 +55,7 @@
                               <p class="text-sm font-weight-bold my-auto ps-sm-2">Enter Host</p>
                               <input id="host_name" class="form-control form-control-sm ms-sm-auto mt-sm-0 mt-2 w-40 c-mt-2" type="text" value=""
                                   data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Input the host name!"
-                                  data-bs-original-title="Input the host name!" onfocus="focused(this)" onfocusout="defocused(this)">
+                                  data-bs-original-title="Input the host name!">
                               <button id="btn_add_host" class="btn btn-sm bg-gradient-primary my-sm-auto mt-2 mb-0" type="button">
                                   <i class="fas fa-plus me-2"></i>Add
                               </button>
@@ -158,7 +158,7 @@
                 if (response.status === true) {
                     // Add the new host to the list
                     $('#host_items').append(`
-                        <div class="d-flex mt-3 host-item" id="host_${response.id}">
+                        <div class="d-flex mt-3 host-item" id="host_${response.customer.id}">
                             <div class="my-auto ms-3">
                                 <div class="h-100 d-flex align-items-center">
                                     <div>
@@ -168,6 +168,10 @@
                                 </div>
                             </div>
                             <div class="ms-auto text-end">
+                                <a class="btn text-dark text-gradient px-3 mb-0 btn_edit"
+                                    href="javascript:;" data-id="${response.customer.id}" data-name="${hostName}">
+                                        <i class="fas fa-pencil-alt me-2" aria-hidden="true"></i>Edit
+                                </a>
                                 <a class="btn btn-link text-danger text-gradient px-3 mb-0 btn_delete"
                                    href="javascript:;" data-name="${hostName}" data-flag="0">
                                     <i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete
@@ -265,7 +269,7 @@
         });
     });
 
-    $('.btn_edit').on('click', function () {
+    $(document).on('click', '.btn_edit', function () {
       const hostId = $(this).data('id');
       const hostName = $(this).data('name');
 

@@ -138,95 +138,24 @@
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive">
-                        <table class="table align-items-center mb-0">
-                            <tbody>
-                            <tr>
-                                <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                    <img src="{{ asset('img/sites/unibet.webp') }}" class="avatar avatar-sm me-3" alt="xd">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">Unit Bet</h6>
-                                    </div>
-                                </div>
-                                </td>
-                                <td>
-                                <a href="https://www.unibet.co.uk/betting/sports/home" class="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="UnitBet" target="_blank">
-                                    <i class="fa fa-paperclip me-1 text-sm" aria-hidden="true"></i> UnitBet
-                                </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                    <img src="{{ asset('img/sites/ggbet.webp') }}" class="avatar avatar-sm me-3" alt="atlassian">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">GG bet</h6>
-                                    </div>
-                                </div>
-                                </td>
-                                <td>
-                                <a href="https://gg.bet/en" class="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GGbet" target="_blank">
-                                    <i class="fa fa-paperclip me-1 text-sm" aria-hidden="true"></i>GGbet
-                                </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                    <img src="{{ asset('img/sites/aceodds.webp') }}" class="avatar avatar-sm me-3" alt="team7">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">Ace Odds</h6>
-                                    </div>
-                                </div>
-                                </td>
-                                <td>
-                                <a href="https://www.aceodds.com/bet-calculator/odds-converter.html" class="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ace Odds" target="_blank">
-                                    <i class="fa fa-paperclip me-1 text-sm" aria-hidden="true"></i>Ace Odds
-                                </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                    <img src="{{ asset('img/sites/ggbet.webp') }}" class="avatar avatar-sm me-3" alt="atlassian">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">GG bet</h6>
-                                    </div>
-                                </div>
-                                </td>
-                                <td>
-                                <a href="https://gg.bet/en" class="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GGbet" target="_blank">
-                                    <i class="fa fa-paperclip me-1 text-sm" aria-hidden="true"></i>GGbet
-                                </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                    <img src="{{ asset('img/sites/ggbet.webp') }}" class="avatar avatar-sm me-3" alt="atlassian">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">GG bet</h6>
-                                    </div>
-                                </div>
-                                </td>
-                                <td>
-                                <a href="https://gg.bet/en" class="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GGbet" target="_blank">
-                                    <i class="fa fa-paperclip me-1 text-sm" aria-hidden="true"></i>GGbet
-                                </a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <table class="table align-items-center mb-0">
+                                <tbody>
+                                    @foreach ($all_websites as $website)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img src="{{ asset($website['icon_url']) }}" class="avatar avatar-sm me-3" alt="xd" />
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">                                            
+                                                    <a href="{{$website['website_url']}}" class="mb-0 text-sm font-weight-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="UnitBet" target="_blank">{{$website['name']}}</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -238,60 +167,19 @@
                     </div>
                     <div class="card-body p-3">
                         <div class="timeline timeline-one-side">
+                            @foreach ($all_coins as $coin)
                             <div class="timeline-block mb-3">
                                 <span class="timeline-step">
                                     <i class="ni ni-credit-card text-success text-gradient"></i>
                                     </span>
                                     <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">Bitcoin</h6>
+                                    <h6 class="text-dark text-sm font-weight-bold mb-0">{{$coin['name']}}</h6>
                                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                                        <span class="badge badge-sm bg-gradient-warning">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
+                                        <span class="badge badge-sm {{$coin['background_classname']}}">{{$coin['address']}}</span>
                                     </p>
                                 </div>
                             </div>
-                            <div class="timeline-block mb-3">
-                                <span class="timeline-step">
-                                <i class="ni ni-credit-card text-danger text-gradient"></i>
-                                </span>
-                                <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">ethereum</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                                    <span class="badge badge-sm bg-gradient-success">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
-                                </p>
-                            </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                                <span class="timeline-step">
-                                <i class="ni ni-credit-card text-info text-gradient"></i>
-                                </span>
-                                <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">litecoin</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                                    <span class="badge badge-sm bg-gradient-info">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
-                                </p>
-                            </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                                <span class="timeline-step">
-                                <i class="ni ni-credit-card text-warning text-gradient"></i>
-                                </span>
-                                <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">TRC20 USDT address</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                                    <span class="badge badge-sm bg-gradient-secondary">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
-                                </p>
-                            </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                                <span class="timeline-step">
-                                <i class="ni ni-credit-card text-primary text-gradient"></i>
-                                </span>
-                                <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">BEP20 USDT</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                                    <span class="badge badge-sm bg-gradient-primary">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
-                                </p>
-                            </div>
+                            @endforeach
                         </div>
                         </div>
                     </div>

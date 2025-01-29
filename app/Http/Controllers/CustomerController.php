@@ -644,7 +644,7 @@ class CustomerController extends Controller
         if($fCustomer){
             return response()->json([
                 'status'=>true,
-                'message'=>'saved suucessfuly!!'
+                'message'=>'saved successfuly!!'
             ]);
         }else{
             return response()->json([

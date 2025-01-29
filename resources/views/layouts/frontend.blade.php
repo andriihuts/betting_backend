@@ -41,45 +41,51 @@
             <footer class="footer pt-3">
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-lg-between">
-                    <div class="col-lg-6 mb-lg-0 mb-4">
+                    <div class="col-lg-4 mb-lg-0 mb-4">
                         <div class="copyright text-center text-sm text-muted text-lg-start">
                         © <script>
                             document.write(new Date().getFullYear())
                         </script>,
                         made with <i class="fa fa-heart"></i> by
-                        <a href="../pages/dashboard.html" class="font-weight-bold" target="_blank">Stepper Group</a>
+                        <a href="/" class="font-weight-bold">Stepper Group</a>
                         for a better web.
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-8">
                         <ul class="nav nav-footer justify-content-center justify-content-lg-end footer-menu">
-                        <li class="nav-item">
-                            <a href="{{ route('bet_new') }}" class="nav-link text-muted" target="_blank">NEW BET</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('bet_list', 3)}}" class="nav-link text-muted" target="_blank">Active BET</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('bet_list', 1)}}" class="nav-link text-muted" target="_blank">Settled bet</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('tabs') }}" class="nav-link pe-0 text-muted" target="_blank">Tabs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('payment_get_irc') }}" class="nav-link pe-0 text-muted" target="_blank">IRC</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('customers_all') }}" class="nav-link pe-0 text-muted" target="_blank">Customers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('payment_get_misc') }}" class="nav-link pe-0 text-muted" target="_blank">Misc</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('payment_transaction') }}" class="nav-link pe-0 text-muted" target="_blank">Transaction</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('currency_all') }}" class="nav-link pe-0 text-muted" target="_blank">Currencies</a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{ route('bet_new') }}" class="nav-link text-muted">NEW BET</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('bet_list', 3)}}" class="nav-link text-muted">Active BET</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('bet_list', 1)}}" class="nav-link text-muted">Settled bet</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('tabs') }}" class="nav-link pe-0 text-muted">Tabs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('payment_get_irc') }}" class="nav-link pe-0 text-muted">IRC</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('customers_all') }}" class="nav-link pe-0 text-muted">Customers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('payment_get_misc') }}" class="nav-link pe-0 text-muted">Misc</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('payment_transaction') }}" class="nav-link pe-0 text-muted">Transaction</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('currency_all') }}" class="nav-link pe-0 text-muted">Currencies</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('coins') }}" class="nav-link pe-0 text-muted">Personal Coins</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('websites') }}" class="nav-link pe-0 text-muted">Useful Websites</a>
+                            </li>
                         </ul>
                     </div>
                     </div>
