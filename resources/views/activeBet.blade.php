@@ -53,8 +53,11 @@
               <table class="table table-flush dataTable-table" id="datatable-search">
                 <thead class="thead-light">
                   <tr>
-                    <th data-sortable="" style="width: 14.6743%;" class="asc">
+                    <th data-sortable="" style="width: 7.6743%;" class="asc">
                       <a href="#" class="dataTable-sorter">Id</a>
+                    </th>
+                    <th data-sortable="" style="width: 7%;" class="asc">
+                      <a href="#" class="dataTable-sorter">Name</a>
                     </th>
                     <th data-sortable="" style="width: 16.382%;" class="">
                       <a href="#" class="dataTable-sorter">Date</a>
@@ -78,13 +81,18 @@
                 </thead>
                 <tbody>
                   @foreach ($active_json_data as $bet_one)                  
-                    <tr class="border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                    <tr class="border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600" data-href="{{route('bet_single', ['bet_id' => $bet_one['id'], 'bet_type' => 1])}}">
                       <td>
                         <div class="d-flex align-items-center">
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="customCheck1">
                           </div>
                           <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['id']}}</p>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['customer_name']}}</p>
                         </div>
                       </td>
                       <td class="font-weight-bold">
@@ -189,6 +197,10 @@
                 });
             }
         });
+    });
+
+    $(document).on('click', 'tr[data-href]', function () {
+        window.location.href = this.dataset.href;
     });
 </script>
 @endsection

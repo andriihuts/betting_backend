@@ -110,10 +110,10 @@
                                     <label class="col-form-label c-font-size-12">{{ $label }}:</label>
                                 </div>
                                 <div class="col-md-5">
-                                    <input type="number" class="form-control form-control-alternative" id="{{ $key }}1" name="{{ $key }}1" value="0">
+                                    <input type="number" class="form-control form-control-alternative" id="{{ $key }}1" name="{{ $key }}1" placeholder="Empty">
                                 </div>
                                 <div class="col-md-5">
-                                    <input type="number" class="form-control form-control-alternative" id="{{ $key }}2" name="{{ $key }}2" value="0">
+                                    <input type="number" class="form-control form-control-alternative" id="{{ $key }}2" name="{{ $key }}2" value="">
                                 </div>
                             </div>
                         @endforeach
@@ -287,7 +287,13 @@
 
                   // Populate the input fields dynamically
                   Object.keys(customer).forEach((key) => {
-                      $(`#${key}`).val(customer[key]);
+                    if(key.endsWith('1') && customer[key] == 0){
+                        $(`#${key}`).val("");
+                    }else if(key.endsWith('2') && customer[key] == 0){
+                        $(`#${key}`).val("");
+                    }else{
+                        $(`#${key}`).val(customer[key]);
+                    }
                   });
 
                   // Show the modal

@@ -1011,7 +1011,6 @@ ul li.editMode input[type=text] {
     border-radius: 10px;
 }
 .tab-container{
-    max-height: 400px;
     overflow: auto;
 }
 

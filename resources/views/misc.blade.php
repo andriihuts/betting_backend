@@ -62,19 +62,19 @@
                 <div class="form-group d-flex align-items-center justify-content-between">
                   <span class="text-sm">Currency - $</span>
                   <div class="form-check form-switch ms-3">
-                    <input class="form-check-input" type="radio" id="d_currency" checked="" name="currency_type">
+                    <input class="form-check-input" type="radio" id="d_currency" checked name="currency_type">
                   </div>
                 </div>
                 <div class="form-group d-flex align-items-center justify-content-between">
                   <span class="text-sm">Currency - M</span>
                   <div class="form-check form-switch ms-3">
-                    <input class="form-check-input" type="radio" id="m_currency" checked="" name="currency_type">
+                    <input class="form-check-input" type="radio" id="m_currency" name="currency_type">
                   </div>
                 </div>
                 <div class="form-group d-flex align-items-center justify-content-between">
                   <span class="text-sm">Currency - RS3</span>
                   <div class="form-check form-switch ms-3">
-                    <input class="form-check-input" type="radio" id="r_currency" checked="" name="currency_type">
+                    <input class="form-check-input" type="radio" id="r_currency" name="currency_type">
                   </div>
                 </div>
                 <button class="btn bg-gradient-primary w-100 mb-0" id="set_amount">Set Amount for Misc</button>

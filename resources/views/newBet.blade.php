@@ -50,7 +50,7 @@
         <div class="row">        
           <div class="col-12 col-lg-8 m-auto">          
               <div class="card multisteps-form__panel p-3 border-radius-xl bg-white js-active" data-animation="FadeIn">
-                <h5 class="font-weight-bolder">Please register a new bets now.</h5>
+                <h5 class="font-weight-bolder">Please register new bets now.</h5>
                 <div class="multisteps-form__content">
                   <div class="row mt-3">
                     <div class="col-12 col-sm-6">
@@ -164,6 +164,16 @@
             },
         });
     }
+
+    // Add dynamic fields on button click
+    $(document).on('click', '.choices', function () {
+      setTimeout(() => {
+        const firstInput = document.querySelector('.choices input');
+        if (firstInput) {
+            firstInput.focus();
+        }
+      }, 100);
+    });
 
     // Initialize customer data for the main select box
     loadSelectBoxData("choices-name", true);
