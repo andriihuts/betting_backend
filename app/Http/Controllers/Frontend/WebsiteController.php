@@ -106,7 +106,9 @@ class WebsiteController extends Controller
         // Update website fields with default values if null
         $update_Website->name = $request->name ?? '';
         $update_Website->website_url = $request->website_url ?? '';
-        $update_Website->icon_url = $request->icon_url ?? '';
+        if($request->icon_url != ''){
+            $update_Website->icon_url = $request->icon_url ?? '';
+        }
         $update_Website->save();
 
         return response()->json([

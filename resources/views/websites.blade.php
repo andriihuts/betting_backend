@@ -334,7 +334,6 @@
 
         const formData = new FormData();
         formData.append('file', $('#file')[0].files[0])
-        console.log('Uploading...')
         $.ajax({
             type: 'POST',
             headers: {
@@ -347,32 +346,33 @@
             data: formData,
             success: function (response) {
                 if (response.status === true) {
-                    console.log(response.file_path)
                     update_useful_website(response.file_path)
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: response.message || 'Failed to upload icon file.',
-                        confirmButtonText: 'OK',
-                    });
+                    update_useful_website()
+                    // Swal.fire({
+                    //     icon: 'error',
+                    //     title: 'Error',
+                    //     text: response.message || 'Failed to upload icon file.',
+                    //     confirmButtonText: 'OK',
+                    // });
                 }
             },
             error: function (xhr) {
                 console.error('Error:', xhr.responseText);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to upload icon file. Please try again.',
-                    confirmButtonText: 'OK',
-                });
+                update_useful_website()
+                // Swal.fire({
+                //     icon: 'error',
+                //     title: 'Error',
+                //     text: 'Failed to upload icon file. Please try again.',
+                //     confirmButtonText: 'OK',
+                // });
             },
         });
 
     });
   });
 
-  function update_useful_website(file_path){    
+  function update_useful_website(file_path = ''){    
 
     const data = {
           id: $('#website_id').val(),
