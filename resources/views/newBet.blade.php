@@ -137,6 +137,9 @@
                 const selectBox = document.getElementById(selectId);                
                 const data = useCustomers ? response.customers : response.hosts;
 
+                localStorage.setItem('customers', JSON.stringify(response.customers))
+                localStorage.setItem('hosts', JSON.stringify(response.hosts))
+
                 data.forEach((item) => {
                     const option = document.createElement('option');
                     option.value = item.id;
@@ -205,7 +208,29 @@
         $('#dynamic-fields-container').append(fieldHTML);
 
         // Load host data for dynamically added select box
-        loadSelectBoxData(selectId, false);
+        // loadSelectBoxData(selectId, false);
+
+        const selectBox = document.getElementById(selectId);
+        
+        const data = JSON.parse(localStorage.getItem('hosts'))
+
+        data.forEach((item) => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            selectBox.appendChild(option);
+        });                
+        // Delay the initialization of the Choices plugin
+        setTimeout(function () {                  
+            const element = document.getElementById(selectId);
+            new Choices(element, {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchChoices: true,
+                searchFocus: true,
+            });
+        }, 100); // Delay for 100ms to ensure the DOM is updated
+        
         fieldCounter++;
     });
 
