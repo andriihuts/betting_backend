@@ -18,9 +18,6 @@
             Login
         </button>
     </form>
-    <p class="mt-4 text-center text-gray-600">
-        Don't have an account? <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Sign up</a>
-    </p>
 </div>
     
 @endsection
