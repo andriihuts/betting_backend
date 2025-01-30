@@ -122,27 +122,6 @@
                 @endforeach                             
               </ul>             
             </div>
-            <div class="card-footer d-flex justify-content-center p-0">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link" href="javascript:;" aria-label="Previous">
-                      <i class="fa fa-angle-left"></i>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="javascript:;">1</a></li>
-                  <li class="page-item"><a class="page-link" href="javascript:;">2</a></li>
-                  <li class="page-item"><a class="page-link" href="javascript:;">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="javascript:;" aria-label="Next">
-                      <i class="fa fa-angle-right"></i>
-                      <span class="sr-only">Next</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
           </div>
         </div>
       </div>      
