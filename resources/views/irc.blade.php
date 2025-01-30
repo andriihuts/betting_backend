@@ -121,7 +121,7 @@
         
         //Make the POST request to your backend endpoint
         $.post(
-            `{{ route('payment_store_misc') }}`,
+            `{{ route('payment_store_irc') }}`,
             {
                 amount: amount,
                 money_type: moneyType,
