@@ -81,7 +81,7 @@
                                 <a href="{{ route('currency_all') }}" class="nav-link pe-0 text-muted">Currencies</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('coins') }}" class="nav-link pe-0 text-muted">Personal Coins</a>
+                                <a href="{{ route('coins') }}" class="nav-link pe-0 text-muted">Personal</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('websites') }}" class="nav-link pe-0 text-muted">Useful Websites</a>

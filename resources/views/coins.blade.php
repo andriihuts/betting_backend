@@ -39,7 +39,7 @@
           </div>
           <div class="col-auto my-auto">
             <div class="h-100">
-              <h5 class="mb-1"> Personal Coins </h5>              
+              <h5 class="mb-1"> Personal </h5>              
             </div>
           </div>          
         </div>

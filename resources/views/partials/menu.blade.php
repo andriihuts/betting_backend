@@ -377,7 +377,7 @@
                 </g>
             </svg>
         </div>
-        <span class="nav-link-text ms-1">PERSONAL COINS</span>
+        <span class="nav-link-text ms-1">Personal</span>
         </a>
     </li>
     <li class="nav-item">
