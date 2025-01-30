@@ -166,9 +166,10 @@
     }
 
     // Add dynamic fields on button click
-    $(document).on('click', '.choices', function () {
+    $(document).on('click', '.choices', function (event) {
+      const choices__list = this.children[1]
       setTimeout(() => {
-        const firstInput = document.querySelector('.choices input');
+        const firstInput = choices__list.querySelector('.choices .choices__list input');
         if (firstInput) {
             firstInput.focus();
         }
