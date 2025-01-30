@@ -1060,3 +1060,8 @@ ul li.editMode input[type=text] {
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
+
+img.navbar-brand-img {
+    width: 40px;
+    height: 40px;
+}
