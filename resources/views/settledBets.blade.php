@@ -54,25 +54,25 @@
                 <thead class="thead-light">
                   <tr>
                     <th data-sortable="" style="width: 7.6743%;" class="asc">
-                      <a href="#" class="dataTable-sorter">Id</a>
+                      <a href="#" class="dataTable-sorter text-lg">Id</a>
                     </th>
                     <th data-sortable="" style="width: 7%;" class="asc">
-                      <a href="#" class="dataTable-sorter">Name</a>
+                      <a href="#" class="dataTable-sorter text-lg">Name</a>
                     </th>
                     <th data-sortable="" style="width: 16.382%;" class="">
-                      <a href="#" class="dataTable-sorter">Date</a>
+                      <a href="#" class="dataTable-sorter text-lg">Date</a>
                     </th>
                     <th data-sortable="" style="width: 16.382%;" class="">
-                      <a href="#" class="dataTable-sorter">Slip</a>
+                      <a href="#" class="dataTable-sorter text-lg">Slip</a>
                     </th>
                     <th data-sortable="" style="width: 10.0658%;" class="">
-                      <a href="#" class="dataTable-sorter">Amount</a>
+                      <a href="#" class="dataTable-sorter text-lg">Amount</a>
                     </th>
                     <th data-sortable="" style="width: 19.6711%;" class="">
-                      <a href="#" class="dataTable-sorter">Currency</a>
+                      <a href="#" class="dataTable-sorter text-lg">Currency</a>
                     </th>
                     <th data-sortable="" style="width: 10.3909%;" class="">
-                      <a href="#" class="dataTable-sorter">Odds</a>
+                      <a href="#" class="dataTable-sorter text-lg">Odds</a>
                     </th>
                     <th>
                       Action
@@ -87,18 +87,18 @@
                             <div class="form-check">
                               <input class="form-check-input" type="checkbox" id="customCheck1">
                             </div>
-                            <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['id']}}</p>
+                            <p class="text-lg font-weight-bold ms-2 mb-0">{{$bet_one['id']}}</p>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['customer_name']}}</p>
+                            <p class="text-lg font-weight-bold ms-2 mb-0">{{$bet_one['customer_name']}}</p>
                           </div>
                         </td>
                         <td class="font-weight-bold">
-                          <span class="my-2 text-xs">{{$bet_one['created_at']}}</span>
+                          <span class="my-2 text-lg">{{$bet_one['created_at']}}</span>
                         </td>
-                        <td class="text-xs font-weight-bold">
+                        <td class="text-lg font-weight-bold">
                           <div class="d-flex align-items-center">
                             <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center">
                               <i class="fas fa-check" aria-hidden="true"></i>
@@ -106,24 +106,24 @@
                             <span>{{$bet_one['slip']}}</span>
                           </div>
                         </td>
-                        <td class="text-xs font-weight-bold">
+                        <td class="text-lg font-weight-bold">
                           <div class="d-flex align-items-center">
                             <span>{{$bet_one['amount']}}</span>
                           </div>
                         </td>
-                        <td class="text-xs font-weight-bold">
-                          <span class="my-2 text-xs">{{$bet_one['currency']}}</span>
+                        <td class="text-lg font-weight-bold">
+                          <span class="my-2 text-lg">{{$bet_one['currency']}}</span>
                         </td>
-                        <td class="text-xs font-weight-bold">
-                          <span class="my-2 text-xs">{{$bet_one['odds']}}</span>
+                        <td class="text-lg font-weight-bold">
+                          <span class="my-2 text-lg">{{$bet_one['odds']}}</span>
                         </td>
                         <td class="text-sm">
                           <a href="{{route('bet_single', ['bet_id' => $bet_one['id'], 'bet_type' => 2])}}" data-bs-toggle="tooltip" class=""  data-bs-original-title="Preview active bet">
                             <i class="fas fa-eye text-secondary" aria-hidden="true"></i>
                           </a>                      
-                          <a href="javascript:;" data-bs-toggle="tooltip" class="mx-3" data-bs-original-title="Delete active bet">
+                          <!-- <a href="javascript:;" data-bs-toggle="tooltip" class="mx-3" data-bs-original-title="Delete active bet">
                             <i class="fas fa-trash text-secondary" aria-hidden="true"></i>
-                          </a>
+                          </a> -->
                         </td>
                       </tr>  
                   @endforeach               
@@ -149,8 +149,14 @@
         perPageSelect: [6, 12, 24] // Options for rows per page
     });
 
-    $(document).on('click', 'tr[data-href]', function () {
-        window.location.href = this.dataset.href;
+    $(document).on('click', 'tr[data-href]', function (event) {     
+
+      // Prevent event from firing when clicking on .btn-delete
+      if ($(event.target).closest('.btn-delete-bet').length) {
+          return;
+      }
+            
+      window.location.href = this.dataset.href;
     });
 </script>
 @endsection

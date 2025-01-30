@@ -64,7 +64,7 @@
                 </div>
                 <div id="coin_items">
                     @foreach ($all_coins as $coin)
-                        <div class="d-flex mt-3 coin-item" id="coin_{{$coin['id']}}">
+                        <div class="d-flex mt-3 coin-item" id="coin_{{$coin['id']}}" data-id="{{ $coin['id'] }}" data-name="{{ $coin['name'] }}">
                             <div class="my-auto ms-3">
                                 <div class="h-100 d-flex align-items-center">
                                     <div>
@@ -177,7 +177,7 @@
               if (response.status === true) {
                   // Add the new coin to the list
                   $('#coin_items').append(`
-                      <div class="d-flex mt-3 coin-item" id="coin_${response.coin.id}">
+                      <div class="d-flex mt-3 coin-item" id="coin_${response.coin.id}" data-id="${response.coin.id}" data-name="${coinName}">
                           <div class="my-auto ms-3">
                               <div class="h-100 d-flex align-items-center">
                                   <div>
@@ -287,6 +287,53 @@
     });
 
     $(document).on('click', '.btn_edit', function () {
+      const coinId = $(this).data('id');
+      const coinName = $(this).data('name');
+
+      // Fetch customer data via API
+      $.ajax({
+        type: 'GET',
+        url: `/coins/${coinId}`,
+        success: function (response) {
+            if (response.status === true) {
+                const coin = response.single;
+
+                // Populate modal fields with customer data
+                $('#coin_id').val(coinId);
+                $('#coinModalLabel').text(`Update Coin for ${coin.name}`);
+
+                // Populate the input fields dynamically
+                Object.keys(coin).forEach((key) => {
+                    $(`#${key}`).val(coin[key]);
+                });
+
+                // Show the modal
+                $('#coinModalMessage').modal('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Failed to fetch coin data.',
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to fetch customer data. Please try again.',
+            });
+        },
+      });    
+    });
+
+    $(document).on('click', '.coin-item', function () {
+
+        // Prevent event from firing when clicking on .btn-delete
+        if ($(event.target).closest('.btn_delete').length) {
+            return;
+        }
+
       const coinId = $(this).data('id');
       const coinName = $(this).data('name');
 

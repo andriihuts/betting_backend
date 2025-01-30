@@ -64,7 +64,7 @@
                 </div>
                 <div id="website_items">
                     @foreach ($all_websites as $website)
-                        <div class="d-flex mt-3 website-item" id="website_{{$website['id']}}">
+                        <div class="d-flex mt-3 website-item" id="website_{{$website['id']}}" data-id="{{ $website['id'] }}" data-name="{{ $website['name'] }}">
                             <div class="my-auto ms-3">
                                 <div class="h-100 d-flex align-items-center gap-3">
                                     <div>
@@ -174,7 +174,7 @@
               if (response.status === true) {
                   // Add the new website to the list
                   $('#website_items').append(`
-                      <div class="d-flex mt-3 website-item" id="website_${response.website.id}">
+                      <div class="d-flex mt-3 website-item" id="website_${response.website.id}" data-id="${response.website.id}" data-name="${websiteName}">
                           <div class="my-auto ms-3">
                               <div class="h-100 d-flex align-items-center gap-3">
                                   <div>
@@ -287,6 +287,54 @@
     });
 
     $(document).on('click', '.btn_edit', function () {
+      const websiteId = $(this).data('id');
+      const websiteName = $(this).data('name');
+
+      // Fetch customer data via API
+      $.ajax({
+        type: 'GET',
+        url: `/websites/${websiteId}`,
+        success: function (response) {
+            if (response.status === true) {
+                const website = response.single;
+
+                // Populate modal fields with customer data
+                $('#website_id').val(websiteId);
+                $('#websiteModalLabel').text(`Update Website for ${website.name}`);
+
+                // Populate the input fields dynamically
+                Object.keys(website).forEach((key) => {
+                    if(key !== 'icon_url'){
+                        $(`#${key}`).val(website[key]);
+                    }
+                });
+
+                // Show the modal
+                $('#websiteModalMessage').modal('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Failed to fetch website data.',
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to fetch customer data. Please try again.',
+            });
+        },
+      });    
+    });
+
+    $(document).on('click', '.website-item', function () {
+        // Prevent event from firing when clicking on .btn-delete
+        if ($(event.target).closest('.btn_delete').length) {
+            return;
+        }
+        
       const websiteId = $(this).data('id');
       const websiteName = $(this).data('name');
 

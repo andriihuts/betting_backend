@@ -1065,3 +1065,27 @@ img.navbar-brand-img {
     width: 40px;
     height: 40px;
 }
+
+.host-item:hover {
+    background-color:#fff6ef;
+    cursor: pointer;
+}
+
+.customer-item:hover {
+    background-color:#fff6ef;
+    cursor: pointer;
+}
+
+.coin-item:hover {
+    background-color:#fff6ef;
+    cursor: pointer;
+}
+
+.website-item:hover {
+    background-color:#fff6ef;
+    cursor: pointer;
+}
+
+.datatable-dropdown label, .datatable-info {
+    font-size: 16px !important;
+}

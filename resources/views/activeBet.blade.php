@@ -87,18 +87,18 @@
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="customCheck1">
                           </div>
-                          <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['id']}}</p>
+                          <p class="text-lg font-weight-bold ms-2 mb-0">{{$bet_one['id']}}</p>
                         </div>
                       </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <p class="text-xs font-weight-bold ms-2 mb-0">{{$bet_one['customer_name']}}</p>
+                          <p class="text-lg font-weight-bold ms-2 mb-0">{{$bet_one['customer_name']}}</p>
                         </div>
                       </td>
                       <td class="font-weight-bold">
-                        <span class="my-2 text-xs">{{$bet_one['created_at']}}</span>
+                        <span class="my-2 text-lg">{{$bet_one['created_at']}}</span>
                       </td>
-                      <td class="text-xs font-weight-bold">
+                      <td class="text-lg font-weight-bold">
                         <div class="d-flex align-items-center">
                           <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center">
                             <i class="fas fa-check" aria-hidden="true"></i>
@@ -106,16 +106,16 @@
                           <span>{{$bet_one['slip']}}</span>
                         </div>
                       </td>
-                      <td class="text-xs font-weight-bold">
+                      <td class="text-lg font-weight-bold">
                         <div class="d-flex align-items-center">
                           <span>{{$bet_one['amount']}}</span>
                         </div>
                       </td>
-                      <td class="text-xs font-weight-bold">
-                        <span class="my-2 text-xs">{{$bet_one['currency']}}</span>
+                      <td class="text-lg font-weight-bold">
+                        <span class="my-2 text-lg">{{$bet_one['currency']}}</span>
                       </td>
-                      <td class="text-xs font-weight-bold">
-                        <span class="my-2 text-xs">{{$bet_one['odds']}}</span>
+                      <td class="text-lg font-weight-bold">
+                        <span class="my-2 text-lg">{{$bet_one['odds']}}</span>
                       </td>
                       <td class="text-sm">
                         <a href="{{route('bet_single', ['bet_id' => $bet_one['id'], 'bet_type' => 1])}}" data-bs-toggle="tooltip" class=""  data-bs-original-title="Preview active bet">
@@ -199,7 +199,12 @@
         });
     });
 
-    $(document).on('click', 'tr[data-href]', function () {
+    $(document).on('click', 'tr[data-href]', function (event) {      
+
+        // Prevent event from firing when clicking on .btn-delete
+        if ($(event.target).closest('.btn-delete-bet').length) {
+            return;
+        }
         window.location.href = this.dataset.href;
     });
 </script>

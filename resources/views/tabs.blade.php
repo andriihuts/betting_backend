@@ -63,7 +63,7 @@
                       </div>
                       <div id="host_items">
                           @foreach ($hosts as $host)
-                              <div class="d-flex mt-3 host-item" id="host_{{$host['id']}}">
+                              <div class="d-flex mt-3 host-item" id="host_{{$host['id']}}" data-id="{{ $host['id'] }}" data-name="{{ $host['name'] }}">
                                   <div class="my-auto ms-3">
                                       <div class="h-100 d-flex align-items-center">
                                           <div>
@@ -158,7 +158,7 @@
                 if (response.status === true) {
                     // Add the new host to the list
                     $('#host_items').append(`
-                        <div class="d-flex mt-3 host-item" id="host_${response.customer.id}">
+                        <div class="d-flex mt-3 host-item" id="host_${response.customer.id}" data-id="${response.customer.id}" data-name="${hostName}">
                             <div class="my-auto ms-3">
                                 <div class="h-100 d-flex align-items-center">
                                     <div>
@@ -270,6 +270,60 @@
     });
 
     $(document).on('click', '.btn_edit', function () {
+      const hostId = $(this).data('id');
+      const hostName = $(this).data('name');
+
+       // Fetch customer data via API
+       $.ajax({
+          type: 'GET',
+          url: `/customers/${hostId}`,
+          success: function (response) {
+              if (response.status === true) {
+                  const customer = response.single;
+
+                  // Populate modal fields with customer data
+                  $('#host_id').val(hostId);
+                  $('#tabModalLabel').text(`Update Tab for ${customer.name}`);
+
+                  // Populate the input fields dynamically
+                  Object.keys(customer).forEach((key) => {
+                    if(key.endsWith('1') && customer[key] == 0){
+                        $(`#${key}`).val("");
+                    }else if(key.endsWith('2') && customer[key] == 0){
+                        $(`#${key}`).val("");
+                    }else{
+                        $(`#${key}`).val(customer[key]);
+                    }
+                  });
+
+                  // Show the modal
+                  $('#tabModalMessage').modal('show');
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: response.message || 'Failed to fetch customer data.',
+                  });
+              }
+          },
+          error: function () {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Failed to fetch customer data. Please try again.',
+              });
+          },
+      });    
+    });
+
+    $(document).on('click', '.host-item', function (event) {
+
+        // Prevent event from firing when clicking on .btn-delete
+        if ($(event.target).closest('.btn_delete').length) {
+            return;
+        }
+
+
       const hostId = $(this).data('id');
       const hostName = $(this).data('name');
 
