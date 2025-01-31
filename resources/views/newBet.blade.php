@@ -151,10 +151,19 @@
                     const element = document.getElementById(selectId);
                     // console.log('select box here2222', element);
                     new Choices(element, {
-                        removeItemButton: true,
+                        removeItemButton: false,
                         searchEnabled: true,
                         searchChoices: true,
                         searchFocus: true,
+                    });
+                    // Manually focus on the search input when the dropdown opens
+                    element.addEventListener('showDropdown', () => {
+                      setTimeout(() => {
+                          const searchInput = element.parentNode.parentNode.querySelector('.choices__list input');
+                          if (searchInput) {
+                              searchInput.focus();
+                          }
+                      }, 100);
                     });
                 }, 100); // Delay for 100ms to ensure the DOM is updated
             },
@@ -167,17 +176,6 @@
             },
         });
     }
-
-    // Add dynamic fields on button click
-    $(document).on('click', '.choices', function (event) {
-      const choices__list = this.children[1]
-      setTimeout(() => {
-        const firstInput = choices__list.querySelector('.choices .choices__list input');
-        if (firstInput) {
-            firstInput.focus();
-        }
-      }, 100);
-    });
 
     // Initialize customer data for the main select box
     loadSelectBoxData("choices-name", true);
@@ -224,10 +222,19 @@
         setTimeout(function () {                  
             const element = document.getElementById(selectId);
             new Choices(element, {
-                removeItemButton: true,
+                removeItemButton: false,
                 searchEnabled: true,
                 searchChoices: true,
                 searchFocus: true,
+            });
+            // Manually focus on the search input when the dropdown opens
+            element.addEventListener('showDropdown', () => {
+              setTimeout(() => {
+                  const searchInput = element.parentNode.parentNode.querySelector('.choices__list input');
+                  if (searchInput) {
+                      searchInput.focus();
+                  }
+              }, 100);
             });
         }, 100); // Delay for 100ms to ensure the DOM is updated
         

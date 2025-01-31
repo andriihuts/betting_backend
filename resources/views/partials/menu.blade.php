@@ -363,7 +363,7 @@
             </g>
             </svg>
         </div>
-        <span class="nav-link-text ms-1">Currencies</span>
+        <span class="nav-link-text ms-1">CURRENCIES</span>
         </a>
     </li>
     <li class="nav-item">
@@ -377,7 +377,7 @@
                 </g>
             </svg>
         </div>
-        <span class="nav-link-text ms-1">Personal</span>
+        <span class="nav-link-text ms-1">PERSONAL</span>
         </a>
     </li>
     <li class="nav-item">
