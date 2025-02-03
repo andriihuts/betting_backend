@@ -197,7 +197,7 @@ class PaymentController extends Controller
                 $transaction->formatted_created_at = Carbon::parse($transaction->created_at)->format('d F Y, \a\t h:i A');
             });
     
-            $todayTransactions = $todayTransactions->merge($additionalTransactions);
+            $todayTransactions = $additionalTransactions;
         }
 
         // 2. Fetch yesterday's transaction history
@@ -223,12 +223,12 @@ class PaymentController extends Controller
                 $transaction->formatted_created_at = Carbon::parse($transaction->created_at)->format('d F Y, \a\t h:i A');
             });
 
-            $yesterdayTransactions = $yesterdayTransactions->merge($additionalYesterdayTransactions);
+            $yesterdayTransactions = $additionalYesterdayTransactions;
         }
 
         // 3. Count total transaction history
         $totalTransactionsCount = Transaction::count();
-        $totalTransactions = Transaction::take(10)->get();
+        $totalTransactions = Transaction::latest()->take(20)->get();
 
         // Format the 'created_at' for each transaction
         $totalTransactions->each(function ($transaction) {
