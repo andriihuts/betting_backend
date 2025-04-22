@@ -126,6 +126,73 @@
                 </div>
             </div>
         </div>
+        <div class="row align-items-center mt-4">
+            <div class="col-lg-12">
+                <div class="nav-wrapper position-relative end-0">
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#yearly-tabs-icons" role="tab" aria-controls="yearly-tabs-icons" aria-selected="true">
+                                <i class="ni ni-chart-bar-32 text-sm me-2"></i> Yearly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#monthly-tabs-icons" role="tab" aria-controls="monthly-tabs-icons" aria-selected="false">
+                                <i class="ni ni-calendar-grid-58 text-sm me-2"></i> Monthly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#daily-tabs-icons" role="tab" aria-controls="daily-tabs-icons" aria-selected="false">
+                                <i class="ni ni-books text-sm me-2"></i> Daily
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Yearly Tab -->
+                        <div class="tab-pane fade show active" id="yearly-tabs-icons" role="tabpanel" aria-labelledby="yearly-tab">
+                            <div class="card z-index-2">
+                                <div class="card-header pb-0">
+                                    <h6>Yearly overview</h6>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="chart">
+                                        <canvas id="chart-yearly" class="chart-canvas" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Monthly Tab -->
+                        <div class="tab-pane fade" id="monthly-tabs-icons" role="tabpanel" aria-labelledby="monthly-tab">
+                            <div class="card z-index-2">
+                                <div class="card-header pb-0">
+                                    <h6>Monthly overview</h6>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="chart">
+                                        <canvas id="chart-monthly" class="chart-canvas" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Daily Tab -->
+                        <div class="tab-pane fade" id="daily-tabs-icons" role="tabpanel" aria-labelledby="daily-tab">
+                            <div class="card z-index-2">
+                                <div class="card-header pb-0">
+                                    <h6>Daily overview</h6>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="chart">
+                                        <canvas id="chart-daily" class="chart-canvas" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>     
+        </div>
         <div class="row my-4">
             <div class="col-lg-6 col-md-6 mb-md-0 mb-4">
                 <div class="card">
@@ -193,10 +260,118 @@
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
-    var options = {
-        damping: '0.5'
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
-    Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+
+    const yearlyData = @json($yearlyDataFormatted); // Format: { labels: [...], data: [...] }
+    const monthlyData = @json($monthlyDataFormatted); // Format: { labels: [...], data: [...] }
+    const dailyData = @json($dailyDataFormatted); // Format: { labels: [...], data: [...] }
+
+    // Chart instance reference
+    let chartInstance;
+    
+    function createChart(chartElementId, chartInfo) {
+        const ctx = document.getElementById(chartElementId).getContext("2d");
+
+        // Destroy existing chart instance to avoid overlap
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Create new chart
+        chartInstance = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: chartInfo.labels, // Use specific labels
+                datasets: [{
+                    label: "Data",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#cb0c9f",
+                    borderWidth: 3,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    data: chartInfo.data, // Use specific data
+                    maxBarThickness: 6,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5],
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#b2b9bf',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2,
+                            },
+                        },
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5],
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#b2b9bf',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2,
+                            },
+                        },
+                    },
+                },
+            },
+        });
     }
+
+    // Event listeners for tab switching
+    document.querySelectorAll('.nav-link').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const tabId = e.target.getAttribute('href');
+            if (tabId === '#yearly-tabs-icons') {
+                createChart('chart-yearly', yearlyData);
+            } else if (tabId === '#monthly-tabs-icons') {
+                createChart('chart-monthly', monthlyData);
+            } else if (tabId === '#daily-tabs-icons') {
+                createChart('chart-daily', dailyData);
+            }
+        });
+    });
+
+    // Initialize the chart for the default tab (Yearly)
+    createChart('chart-yearly', yearlyData);
 </script>   
 @endsection

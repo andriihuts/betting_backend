@@ -11,7 +11,7 @@ use App\Models\Website;
 class HomeController extends Controller
 {
     //
-    public function index(){        
+    public function index(){
         
         // Fetch customers with necessary relationships
         $all_Customers = Customer::with(['new_bets.bet_splitters'])->orderBy('name', 'ASC')->get();
@@ -112,6 +112,57 @@ class HomeController extends Controller
         $irc = $irc_money_value;
         $customer = $customer_json_data;
 
-        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites'));
+        $yearlyData = NetIRC::selectRaw('YEAR(created_at) as year, SUM(net) as total_net')
+        ->groupBy('year')
+        ->orderBy('year')
+        ->get()
+            ->pluck('total_net', 'year');
+
+        $years = range(now()->year - 2, now()->year); // Show 3 years: current year, previous, and one before that
+        $yearlyDataFormatted = [
+            'labels' => $years,
+            'data' => array_map(function ($year) use ($yearlyData) {
+                return $yearlyData[$year] ?? 0; // Provide 0 if the year data does not exist
+            }, $years),
+        ];
+
+        // 2. Generate Monthly Data (with empty months if not found)
+        $currentYear = now()->year;
+        $monthlyData = NetIRC::selectRaw('MONTH(created_at) as month, SUM(net) as total_net')
+            ->whereYear('created_at', $currentYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total_net', 'month');
+
+        $months = range(1, 12); // 1 to 12 for all months of the year
+        $monthlyDataFormatted = [
+            'labels' => array_map(function ($month) {
+                return date('M', mktime(0, 0, 0, $month, 10)); // Convert month number to string
+            }, $months),
+            'data' => array_map(function ($month) use ($monthlyData) {
+                return $monthlyData[$month] ?? 0; // Provide 0 if the month data does not exist
+            }, $months),
+        ];
+
+        // 3. Generate Daily Data (with empty days if not found)
+        $dailyData = NetIRC::selectRaw('DAYOFWEEK(created_at) as day, SUM(net) as total_net')
+            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get()
+            ->pluck('total_net', 'day');
+
+        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Days of the week (1 = Sunday, 7 = Saturday)
+        $dailyDataFormatted = [
+            'labels' => array_map(function ($day) {
+                return date('D', strtotime("Sunday +{$day} days")); // Get weekday name
+            }, $daysOfWeek),
+            'data' => array_map(function ($day) use ($dailyData) {
+                return $dailyData[$day] ?? 0; // Provide 0 if the day data does not exist
+            }, $daysOfWeek),
+        ];
+
+        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted'));
     }
 }
