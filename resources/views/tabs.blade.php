@@ -68,7 +68,7 @@
                                       <div class="h-100 d-flex align-items-center">
                                           <div>
                                               <h6 class="mb-0">{{$host['name']}}</h6>
-                                              <p class="mb-0 text-sm">{{$host['total_perfect']}}$ | {{$host['total_game']}} m | {{$host['total_cad']}} c | {{$host['total_rs3']}} RS3</p>
+                                              <p class="mb-0 text-sm" style="color: {{$host['total_perfect']>=0?'darkgreen':'red'}}">{{$host['total_perfect']}}$ | {{$host['total_game']}} m | {{$host['total_cad']}} c | {{$host['total_rs3']}} RS3</p>
                                           </div>
                                       </div>
                                   </div>
