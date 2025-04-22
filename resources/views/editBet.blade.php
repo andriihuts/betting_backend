@@ -79,19 +79,19 @@
                       <div class="w-100">
                         <label>Current Type</label>
                         <select name="choices-currency-type" id="choices-currency-type">
-                          <option value="a-(applepay)">A-(APPLEPAY)</option>
-                          <option value="b-(bitcoin)">B-(BITCOIN)</option>
-                          <option value="e-(ethereum)">E-(ETHEREUM)</option>
-                          <option value="u-(usdt)">U-(USDT)</option>
-                          <option value="c-(CAD)">C-(CAD)</option>
-                          <option value="m-(OSRS)">M-(OSRS)</option>
-                          <option value="r-(RS3)">R-(RS3)</option>
+                          <option value="a-(applepay)" {{$active_json_data['currency'] == "a-(applepay)"?'selected':''}}>A-(APPLEPAY)</option>
+                          <option value="b-(bitcoin)" {{$active_json_data['currency'] == "b-(bitcoin)"?'selected':''}}>B-(BITCOIN)</option>
+                          <option value="e-(ethereum)" {{$active_json_data['currency'] == "e-(ethereum)"?'selected':''}}>E-(ETHEREUM)</option>
+                          <option value="u-(usdt)" {{$active_json_data['currency'] == "u-(usdt)"?'selected':''}}>U-(USDT)</option>
+                          <option value="c-(CAD)" {{$active_json_data['currency'] == "c-(CAD)"?'selected':''}}>C-(CAD)</option>
+                          <option value="m-(OSRS)" {{$active_json_data['currency'] == "m-(OSRS)"?'selected':''}}>M-(OSRS)</option>
+                          <option value="r-(RS3)" {{$active_json_data['currency'] == "r-(RS3)"?'selected':''}}>R-(RS3)</option>
                         </select>                        
                       </div>
-                    </div>                    
+                    </div>
                     <div class="col-12 col-sm-6 mt-3 mt-sm-0">
                       <label>Note</label>
-                      <textarea class="form-control" type="text" name="note" placeholder="Enter note" rows="3"></textarea>
+                      <textarea class="form-control" type="text" name="note" placeholder="Enter note" rows="3">{{$active_json_data['notes']}}</textarea>
                     </div>
                   </div>
                   <div class="row mt-3">                                      

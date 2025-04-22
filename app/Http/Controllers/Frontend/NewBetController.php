@@ -342,6 +342,7 @@ class NewBetController extends Controller
         $bet->amount = $amount;
         $bet->slip = $slip;
         $bet->notes = $note;
+        $bet->currency = $currency;
         $bet->save();
 
         // Remove old splitters

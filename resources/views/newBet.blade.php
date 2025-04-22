@@ -91,7 +91,7 @@
                     </div>                    
                     <div class="col-12 col-sm-6 mt-3 mt-sm-0">
                       <label>Note</label>
-                      <textarea class="form-control" type="text" name="note" placeholder="Enter note" rows="3"></textarea>
+                      <textarea class="form-control" type="text" name="note" id="note" placeholder="Enter note" rows="3"></textarea>
                     </div>
                   </div>
                   <div class="row mt-3">                                      
@@ -298,7 +298,7 @@
                         odds: odds,
                         amount: amount,
                         currency: currency,
-                        note: note,
+                        notes: note,
                         splitters1: splitters,
                         customer_id: customer_id,
                         status: 3,
