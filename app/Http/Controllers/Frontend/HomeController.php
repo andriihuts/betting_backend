@@ -207,10 +207,11 @@ class HomeController extends Controller
         $end = now()->endOfWeek()->format('Y-m-d H:i:s');
 
         $dailyData = NetIRC::from(DB::raw("
-            (
+                (
                     SELECT 
-                        *,
-                        DAYOFWEEK(created_at) AS day,
+                        id,
+                        created_at,
+                        net,
                         ROW_NUMBER() OVER (
                             PARTITION BY DAYOFWEEK(created_at)
                             ORDER BY created_at DESC
@@ -219,7 +220,10 @@ class HomeController extends Controller
                     WHERE created_at BETWEEN '$start' AND '$end'
                 ) AS ranked_days
             "))
-            ->select('day', 'net as latest_net')
+            ->selectRaw('
+                ((DAYOFWEEK(created_at) - 1 + 6) % 7) + 1 AS day, 
+                net as latest_net
+            ')
             ->where('rn', 1)
             ->orderBy('day')
             ->get()
