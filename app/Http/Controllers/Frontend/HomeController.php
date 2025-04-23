@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\NetIRC;
 use App\Models\Coin;
 use App\Models\Website;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -112,11 +113,23 @@ class HomeController extends Controller
         $irc = $irc_money_value;
         $customer = $customer_json_data;
 
-        $yearlyData = NetIRC::selectRaw('YEAR(created_at) as year, SUM(net) as total_net')
-        ->groupBy('year')
-        ->orderBy('year')
-        ->get()
-            ->pluck('total_net', 'year');
+        $yearlyData = NetIRC::from(DB::raw("
+            (
+                    SELECT 
+                        *,
+                        YEAR(created_at) AS year,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY YEAR(created_at)
+                            ORDER BY created_at DESC
+                        ) AS rn
+                    FROM net_i_r_c_s
+                ) AS ranked_years
+            "))
+            ->select('year', 'net as latest_net')
+            ->where('rn', 1)
+            ->orderBy('year')
+            ->get()
+            ->pluck('latest_net', 'year');
 
         $years = range(now()->year - 2, now()->year); // Show 3 years: current year, previous, and one before that
         $yearlyDataFormatted = [
@@ -128,12 +141,24 @@ class HomeController extends Controller
 
         // 2. Generate Monthly Data (with empty months if not found)
         $currentYear = now()->year;
-        $monthlyData = NetIRC::selectRaw('MONTH(created_at) as month, SUM(net) as total_net')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
+        $monthlyData = NetIRC::from(DB::raw("
+            (
+                    SELECT 
+                        *,
+                        MONTH(created_at) AS month,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY MONTH(created_at)
+                            ORDER BY created_at DESC
+                        ) AS rn
+                    FROM net_i_r_c_s
+                    WHERE YEAR(created_at) = $currentYear
+                ) AS ranked_months
+            "))
+            ->select('month', 'net as latest_net')
+            ->where('rn', 1)
             ->orderBy('month')
             ->get()
-            ->pluck('total_net', 'month');
+            ->pluck('latest_net', 'month');
 
         $months = range(1, 12); // 1 to 12 for all months of the year
         $monthlyDataFormatted = [
@@ -146,15 +171,26 @@ class HomeController extends Controller
         ];
 
         // 3. Generate Weekly Data (with empty weeks if not found)
-        $weeklyData = NetIRC::selectRaw('
-            (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1) AS week,
-            SUM(net) as total_net
-        ')
-        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-        ->groupBy('week')
-        ->orderBy('week')
-        ->get()
-        ->pluck('total_net', 'week'); // <-- 'week' now matches the lowercase alias
+        $start = now()->startOfMonth()->format('Y-m-d H:i:s');
+        $end = now()->endOfMonth()->format('Y-m-d H:i:s');
+        $weeklyData = NetIRC::from(DB::raw("
+            (
+                    SELECT 
+                        *,
+                        (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1) AS week_number,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1)
+                            ORDER BY created_at DESC
+                        ) AS rn
+                    FROM net_i_r_c_s
+                    WHERE created_at BETWEEN '$start' AND '$end'
+                ) AS ranked_weeks
+            "))
+            ->select('week_number as week', 'net as latest_net')
+            ->where('rn', 1)
+            ->orderBy('week')
+            ->get()
+            ->pluck('latest_net', 'week');
 
         $weeksInMonth = now()->endOfMonth()->format('W') - now()->startOfMonth()->format('W') + 1;
         $weeksOfMonth = range(1, $weeksInMonth);
@@ -167,12 +203,27 @@ class HomeController extends Controller
         ];
 
         // 4. Generate Daily Data (with empty days if not found)
-        $dailyData = NetIRC::selectRaw('DAYOFWEEK(created_at) as day, SUM(net) as total_net')
-            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->groupBy('day')
+        $start = now()->startOfWeek()->format('Y-m-d H:i:s');
+        $end = now()->endOfWeek()->format('Y-m-d H:i:s');
+
+        $dailyData = NetIRC::from(DB::raw("
+            (
+                    SELECT 
+                        *,
+                        DAYOFWEEK(created_at) AS day,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY DAYOFWEEK(created_at)
+                            ORDER BY created_at DESC
+                        ) AS rn
+                    FROM net_i_r_c_s
+                    WHERE created_at BETWEEN '$start' AND '$end'
+                ) AS ranked_days
+            "))
+            ->select('day', 'net as latest_net')
+            ->where('rn', 1)
             ->orderBy('day')
             ->get()
-            ->pluck('total_net', 'day');
+            ->pluck('latest_net', 'day');
 
         $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Days of the week (1 = Sunday, 7 = Saturday)
         $dailyDataFormatted = [
