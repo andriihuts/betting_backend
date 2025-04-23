@@ -132,13 +132,8 @@
                 <!-- Navigation Tabs -->
                 <ul class="nav nav-pills nav-fill p-1" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#yearly-tabs-icons" role="tab" aria-controls="yearly-tabs-icons" aria-selected="true">
-                            <i class="ni ni-chart-bar-32 text-sm me-2"></i> Yearly
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#monthly-tabs-icons" role="tab" aria-controls="monthly-tabs-icons" aria-selected="false">
-                            <i class="ni ni-calendar-grid-58 text-sm me-2"></i> Monthly
+                        <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#daily-tabs-icons" role="tab" aria-controls="daily-tabs-icons" aria-selected="true">
+                            <i class="ni ni-chart-bar-32 text-sm me-2"></i> Daily
                         </a>
                     </li>
                     <li class="nav-item">
@@ -147,36 +142,28 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#daily-tabs-icons" role="tab" aria-controls="daily-tabs-icons" aria-selected="false">
-                            <i class="ni ni-books text-sm me-2"></i> Daily
+                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#monthly-tabs-icons" role="tab" aria-controls="monthly-tabs-icons" aria-selected="false">
+                            <i class="ni ni-calendar-grid-58 text-sm me-2"></i> Monthly
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#yearly-tabs-icons" role="tab" aria-controls="yearly-tabs-icons" aria-selected="false">
+                            <i class="ni ni-books text-sm me-2"></i> Yearly
                         </a>
                     </li>
                 </ul>
 
                 <!-- Tab Content -->
                 <div class="tab-content">
-                    <!-- Yearly Tab -->
-                    <div class="tab-pane fade show active" id="yearly-tabs-icons" role="tabpanel" aria-labelledby="yearly-tab">
+                    <!-- Daily Tab -->
+                    <div class="tab-pane fade show active" id="daily-tabs-icons" role="tabpanel" aria-labelledby="daily-tab">
                         <div class="card z-index-2">
                             <div class="card-header pb-0">
-                                <h6>Yearly overview</h6>
+                                <h6>Daily overview</h6>
                             </div>
                             <div class="card-body p-3">
                                 <div class="chart">
-                                    <canvas id="chart-yearly" class="chart-canvas" height="300"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Monthly Tab -->
-                    <div class="tab-pane fade" id="monthly-tabs-icons" role="tabpanel" aria-labelledby="monthly-tab">
-                        <div class="card z-index-2">
-                            <div class="card-header pb-0">
-                                <h6>Monthly overview</h6>
-                            </div>
-                            <div class="card-body p-3">
-                                <div class="chart">
-                                    <canvas id="chart-monthly" class="chart-canvas" height="300"></canvas>
+                                    <canvas id="chart-daily" class="chart-canvas" height="300"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -194,15 +181,28 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Daily Tab -->
-                    <div class="tab-pane fade" id="daily-tabs-icons" role="tabpanel" aria-labelledby="daily-tab">
+                    <!-- Monthly Tab -->
+                    <div class="tab-pane fade" id="monthly-tabs-icons" role="tabpanel" aria-labelledby="monthly-tab">
                         <div class="card z-index-2">
                             <div class="card-header pb-0">
-                                <h6>Daily overview</h6>
+                                <h6>Monthly overview</h6>
                             </div>
                             <div class="card-body p-3">
                                 <div class="chart">
-                                    <canvas id="chart-daily" class="chart-canvas" height="300"></canvas>
+                                    <canvas id="chart-monthly" class="chart-canvas" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Yearly Tab -->
+                    <div class="tab-pane fade" id="yearly-tabs-icons" role="tabpanel" aria-labelledby="yearly-tab">
+                        <div class="card z-index-2">
+                            <div class="card-header pb-0">
+                                <h6>Yearly overview</h6>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="chart">
+                                    <canvas id="chart-yearly" class="chart-canvas" height="300"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -412,6 +412,6 @@
     });
 
     // Initialize the chart for the default tab (Yearly)
-    createChart('chart-yearly', yearlyData);
+    createChart('chart-daily', dailyData);
 </script>
 @endsection
