@@ -145,7 +145,28 @@ class HomeController extends Controller
             }, $months),
         ];
 
-        // 3. Generate Daily Data (with empty days if not found)
+        // 3. Generate Weekly Data (with empty weeks if not found)
+        $weeklyData = NetIRC::selectRaw('
+            (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1) AS week,
+            SUM(net) as total_net
+        ')
+        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->groupBy('week')
+        ->orderBy('week')
+        ->get()
+        ->pluck('total_net', 'week'); // <-- 'week' now matches the lowercase alias
+
+        $weeksInMonth = now()->endOfMonth()->format('W') - now()->startOfMonth()->format('W') + 1;
+        $weeksOfMonth = range(1, $weeksInMonth);
+
+        $weeklyDataFormatted = [
+            'labels' => $weeksOfMonth,
+            'data' => array_map(function ($week) use ($weeklyData) {
+                return $weeklyData[$week] ?? 0; // Provide 0 if missing
+            }, $weeksOfMonth),
+        ];
+
+        // 4. Generate Daily Data (with empty days if not found)
         $dailyData = NetIRC::selectRaw('DAYOFWEEK(created_at) as day, SUM(net) as total_net')
             ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
             ->groupBy('day')
@@ -163,6 +184,6 @@ class HomeController extends Controller
             }, $daysOfWeek),
         ];
 
-        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted'));
+        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted', 'weeklyDataFormatted'));
     }
 }

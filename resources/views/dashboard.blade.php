@@ -142,6 +142,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#weekly-tabs-icons" role="tab" aria-controls="weekly-tabs-icons" aria-selected="false">
+                                <i class="ni ni-time-alarm text-sm me-2"></i> Weekly
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#daily-tabs-icons" role="tab" aria-controls="daily-tabs-icons" aria-selected="false">
                                 <i class="ni ni-books text-sm me-2"></i> Daily
                             </a>
@@ -172,6 +177,19 @@
                                 <div class="card-body p-3">
                                     <div class="chart">
                                         <canvas id="chart-monthly" class="chart-canvas" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Weekly Tab -->
+                        <div class="tab-pane fade" id="weekly-tabs-icons" role="tabpanel" aria-labelledby="weekly-tab">
+                            <div class="card z-index-2">
+                                <div class="card-header pb-0">
+                                    <h6>Weekly overview</h6>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="chart">
+                                        <canvas id="chart-weekly" class="chart-canvas" height="300"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -268,6 +286,7 @@
 
     const yearlyData = @json($yearlyDataFormatted); // Format: { labels: [...], data: [...] }
     const monthlyData = @json($monthlyDataFormatted); // Format: { labels: [...], data: [...] }
+    const weeklyData = @json($weeklyDataFormatted); // Format: { labels: [...], data: [...] }
     const dailyData = @json($dailyDataFormatted); // Format: { labels: [...], data: [...] }
 
     // Chart instance reference
@@ -365,6 +384,8 @@
                 createChart('chart-yearly', yearlyData);
             } else if (tabId === '#monthly-tabs-icons') {
                 createChart('chart-monthly', monthlyData);
+            } else if (tabId === '#weekly-tabs-icons') {
+                createChart('chart-weekly', weeklyData);
             } else if (tabId === '#daily-tabs-icons') {
                 createChart('chart-daily', dailyData);
             }
