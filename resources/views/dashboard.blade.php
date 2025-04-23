@@ -283,6 +283,20 @@
         Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
 
+    function trimTrailingZeros(chartInfo) {
+        const { labels, data } = chartInfo;
+        let lastNonZeroIndex = data.length - 1;
+
+        while (lastNonZeroIndex >= 0 && data[lastNonZeroIndex] === 0) {
+            lastNonZeroIndex--;
+        }
+
+        return {
+            labels: labels.slice(0, lastNonZeroIndex + 1),
+            data: data.slice(0, lastNonZeroIndex + 1),
+        };
+    }
+
     const yearlyData = @json($yearlyDataFormatted); // Format: { labels: [...], data: [...] }
     const monthlyData = @json($monthlyDataFormatted); // Format: { labels: [...], data: [...] }
     const weeklyData = @json($weeklyDataFormatted); // Format: { labels: [...], data: [...] }
@@ -290,25 +304,40 @@
 
     // Chart instance reference
     let chartInstance;
-    
+
     function createChart(chartElementId, chartInfo) {
         const ctx = document.getElementById(chartElementId).getContext("2d");
 
-        // Create a gradient background
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400); // Adjust gradient dimensions
-        gradient.addColorStop(0, '#CB0C9F44'); // Start color
-        gradient.addColorStop(1, 'transparent'); // End color
+        // 1. Trim trailing zero values
+        let { labels, data } = chartInfo;
+        let lastNonZeroIndex = data.length - 1;
+        while (lastNonZeroIndex >= 0 && data[lastNonZeroIndex] === 0) {
+            lastNonZeroIndex--;
+        }
 
-        // Destroy existing chart instance to avoid overlap
+        // If nothing remains after trimming, or all values are 0, don't draw chart
+        if (lastNonZeroIndex < 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            return;
+        }
+
+        // Trim the chart data
+        labels = labels.slice(0, lastNonZeroIndex + 1);
+        data = data.slice(0, lastNonZeroIndex + 1);
+
+        // Create a gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, '#CB0C9F44');
+        gradient.addColorStop(1, 'transparent');
+
         if (chartInstance) {
             chartInstance.destroy();
         }
 
-        // Create new chart
         chartInstance = new Chart(ctx, {
             type: "line",
             data: {
-                labels: chartInfo.labels, // Use specific labels
+                labels,
                 datasets: [{
                     label: "NET($) ",
                     tension: 0,
@@ -317,7 +346,7 @@
                     borderWidth: 3,
                     backgroundColor: gradient,
                     fill: true,
-                    data: chartInfo.data, // Use specific data
+                    data,
                     maxBarThickness: 6
                 }],
             },
@@ -344,6 +373,8 @@
                 },
                 scales: {
                     y: {
+                        min: Math.floor(Math.min(...data) * 0.96),
+                        beginAtZero: false,
                         grid: {
                             drawBorder: false,
                             display: true,
@@ -362,6 +393,17 @@
                                 lineHeight: 2,
                             },
                         },
+                        title: {
+                            display: true,
+                            text: 'NET ($)',
+                            font: {
+                                size: 18,            // Adjust font size
+                                family: 'Open Sans', // Font family
+                                style: 'normal',     // Font style: 'normal', 'italic', 'oblique', or 'bold'
+                                lineHeight: 1.2      // Optional: adjust line height
+                            },
+                            color: '#888'            // Optional: change title color
+                        }
                     },
                     x: {
                         grid: {
@@ -385,11 +427,7 @@
                     },
                 },
                 onHover: function (event, chartElement) {
-                    if (chartElement.length) {
-                        event.native.target.style.cursor = 'pointer';
-                    } else {
-                        event.native.target.style.cursor = 'default';
-                    }
+                    event.native.target.style.cursor = chartElement.length ? 'pointer' : 'default';
                 },
             },
         });
