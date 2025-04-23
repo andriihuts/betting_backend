@@ -294,6 +294,11 @@
     function createChart(chartElementId, chartInfo) {
         const ctx = document.getElementById(chartElementId).getContext("2d");
 
+        // Create a gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400); // Adjust gradient dimensions
+        gradient.addColorStop(0, '#CB0C9F44'); // Start color
+        gradient.addColorStop(1, 'transparent'); // End color
+
         // Destroy existing chart instance to avoid overlap
         if (chartInstance) {
             chartInstance.destroy();
@@ -305,16 +310,15 @@
             data: {
                 labels: chartInfo.labels, // Use specific labels
                 datasets: [{
-                    label: "Data",
+                    label: "NET($) ",
                     tension: 0,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#cb0c9f",
+                    pointRadius: 6,
+                    borderColor: "#CB0C9F",
                     borderWidth: 3,
-                    backgroundColor: 'transparent',
+                    backgroundColor: gradient,
                     fill: true,
                     data: chartInfo.data, // Use specific data
-                    maxBarThickness: 6,
+                    maxBarThickness: 6
                 }],
             },
             options: {
@@ -323,11 +327,20 @@
                 plugins: {
                     legend: {
                         display: false,
-                    },
+                    }
                 },
                 interaction: {
                     intersect: false,
                     mode: 'index',
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 8,
+                        hoverBorderWidth: 2,
+                        hoverBorderColor: 'darkgreen',
+                        hoverBackgroundColor: 'lightgreen',
+                    }
                 },
                 scales: {
                     y: {
@@ -353,8 +366,8 @@
                     x: {
                         grid: {
                             drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
+                            display: true,
+                            drawOnChartArea: true,
                             drawTicks: false,
                             borderDash: [5, 5],
                         },
@@ -370,6 +383,13 @@
                             },
                         },
                     },
+                },
+                onHover: function (event, chartElement) {
+                    if (chartElement.length) {
+                        event.native.target.style.cursor = 'pointer';
+                    } else {
+                        event.native.target.style.cursor = 'default';
+                    }
                 },
             },
         });
@@ -393,5 +413,5 @@
 
     // Initialize the chart for the default tab (Yearly)
     createChart('chart-yearly', yearlyData);
-</script>   
+</script>
 @endsection
