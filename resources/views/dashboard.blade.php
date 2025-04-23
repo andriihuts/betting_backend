@@ -378,7 +378,7 @@
     // Event listeners for tab switching
     document.querySelectorAll('.nav-link').forEach(tab => {
         tab.addEventListener('click', (e) => {
-            const tabId = e.target.getAttribute('href');
+            const tabId = e.currentTarget.getAttribute('href');
             if (tabId === '#yearly-tabs-icons') {
                 createChart('chart-yearly', yearlyData);
             } else if (tabId === '#monthly-tabs-icons') {
