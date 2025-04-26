@@ -204,7 +204,7 @@ class HomeController extends Controller
 
         // 4. Generate Daily Data (with empty days if not found)
         $start = now()->startOfWeek()->format('Y-m-d H:i:s');
-        $end = now()->endOfWeek()->format('Y-m-d H:i:s');
+        $end = now()->format('Y-m-d H:i:s'); // 👈 till now, not end of week
 
         $dailyData = NetIRC::from(DB::raw("
                 (
@@ -229,15 +229,25 @@ class HomeController extends Controller
             ->get()
             ->pluck('latest_net', 'day');
 
-        $daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Days of the week (1 = Sunday, 7 = Saturday)
+        // Only days up to today
+        $todayDayOfWeek = ((now()->dayOfWeekIso ?? 7)); // ISO: Monday=1, Sunday=7
+
+        $daysOfWeek = range(1, $todayDayOfWeek); // 👈 only from 1 to today
+
+        $lastNet = 0;
         $dailyDataFormatted = [
-            'labels' => array_map(function ($day) {
-                return date('D', strtotime("Sunday +{$day} days")); // Get weekday name
-            }, $daysOfWeek),
-            'data' => array_map(function ($day) use ($dailyData) {
-                return $dailyData[$day] ?? 0; // Provide 0 if the day data does not exist
-            }, $daysOfWeek),
+            'labels' => [],
+            'data' => [],
         ];
+
+        foreach ($daysOfWeek as $day) {
+            $dailyDataFormatted['labels'][] = date('D', strtotime("Sunday +{$day} days"));
+            
+            if (isset($dailyData[$day])) {
+                $lastNet = $dailyData[$day];
+            }
+            $dailyDataFormatted['data'][] = $lastNet;
+        }
 
         return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted', 'weeklyDataFormatted'));
     }
