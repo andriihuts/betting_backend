@@ -203,8 +203,8 @@ class HomeController extends Controller
         ];
 
         // 4. Generate Daily Data (with empty days if not found)
-        $start = now()->startOfWeek()->format('Y-m-d H:i:s');
-        $end = now()->format('Y-m-d H:i:s'); // 👈 till now, not end of week
+        $start = now()->subDays(6)->startOfDay()->format('Y-m-d H:i:s'); // 6 days ago + today = 7 days
+        $end = now()->endOfDay()->format('Y-m-d H:i:s'); // till now
 
         $dailyData = NetIRC::from(DB::raw("
                 (
@@ -213,7 +213,7 @@ class HomeController extends Controller
                         created_at,
                         net,
                         ROW_NUMBER() OVER (
-                            PARTITION BY DAYOFWEEK(created_at)
+                            PARTITION BY DATE(created_at)
                             ORDER BY created_at DESC
                         ) AS rn
                     FROM net_i_r_c_s
@@ -221,18 +221,19 @@ class HomeController extends Controller
                 ) AS ranked_days
             "))
             ->selectRaw('
-                ((DAYOFWEEK(created_at) - 1 + 6) % 7) + 1 AS day, 
+                DATE(created_at) as day_date,
                 net as latest_net
             ')
             ->where('rn', 1)
-            ->orderBy('day')
+            ->orderBy('day_date')
             ->get()
-            ->pluck('latest_net', 'day');
+            ->pluck('latest_net', 'day_date');
 
-        // Only days up to today
-        $todayDayOfWeek = ((now()->dayOfWeekIso ?? 7)); // ISO: Monday=1, Sunday=7
-
-        $daysOfWeek = range(1, $todayDayOfWeek); // 👈 only from 1 to today
+        // Build last 7 days
+        $days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $days->push(now()->subDays($i)->format('Y-m-d'));
+        }
 
         $lastNet = 0;
         $dailyDataFormatted = [
@@ -240,14 +241,16 @@ class HomeController extends Controller
             'data' => [],
         ];
 
-        foreach ($daysOfWeek as $day) {
-            $dailyDataFormatted['labels'][] = date('D', strtotime("Sunday +{$day} days"));
-            
+        foreach ($days as $day) {
+            $dailyDataFormatted['labels'][] = date('D', strtotime($day)); // Mon, Tue, etc.
+
             if (isset($dailyData[$day])) {
                 $lastNet = $dailyData[$day];
             }
+
             $dailyDataFormatted['data'][] = $lastNet;
         }
+
 
         return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted', 'weeklyDataFormatted'));
     }
