@@ -70,7 +70,7 @@
                       <div class="h-100 d-flex align-items-center">
                         <div>
                           <h6 class="mb-0">{{$customer['name']}}</h6>
-                          <p class="mb-0 text-sm">{{$customer['total_perfect']}}$ | {{$customer['total_game']}} m | 
+                          <p class="mb-0 text-md text-bold" style="color: {{$customer['total_perfect']>=0?'#008888':'#FF0000'}}">{{$customer['total_perfect']}}$ | {{$customer['total_game']}} m | 
                               {{$customer['total_cad']}} c | {{$customer['total_rs3']}} RS3</p>
                         </div>
                       </div>

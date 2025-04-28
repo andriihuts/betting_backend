@@ -33,7 +33,7 @@ class NewBetController extends Controller
         }
     }
     //show the new bet page.
-    public function index(){               
+    public function index(){      
         return view('newBet');
     }
 
@@ -64,11 +64,11 @@ class NewBetController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->all();
-
             // Determine multiplier based on currency
             $multiplier = match ($requestData['currency']) {
                 'm-(OSRS)' => $this->mValue,
                 'c-(CAD)' => 0.75,
+                'u-(ukbt)' => 1.33,
                 'r-(RS3)' => $this->rValue,
                 default => 1,
             };
@@ -429,7 +429,7 @@ class NewBetController extends Controller
                 'b-(bitcoin)' => 'b_bitcoin',
                 'e-(ethereum)' => 'e_ethereum',
                 'c-(CAD)' => 'c_card',
-                'u-(usdt)' => 'u_usdt',
+                'u-(ukbt)' => 'u_ukbt',
                 'm-(OSRS)' => 'm_game_currency',
                 'r-(RS3)' => 'r_rs3',
                 default => null,
@@ -443,14 +443,6 @@ class NewBetController extends Controller
         // Calculate total splitter money and real amount
         $splitter_amount_total = $betSplitters->sum('amount');
         $real_amount = $update_active_bet->amount - $splitter_amount_total;
-
-        // Calculate single_perfect_money based on currency and status
-        // $multiplier = match ($update_active_bet->currency) {
-        //     'm-(OSRS)' => $this->mValue,
-        //     'r-(RS3)' => $this->rValue,
-        //     'c-(CAD)' => 0.75,
-        //     default => 1,
-        // };
         $multiplier = $update_active_bet->rate;
 
         $single_perfect_money = match (true) {
@@ -471,7 +463,7 @@ class NewBetController extends Controller
                 'b-(bitcoin)' => 'b_bitcoin',
                 'e-(ethereum)' => 'e_ethereum',
                 'c-(CAD)' => 'c_card',
-                'u-(usdt)' => 'u_usdt',
+                'u-(ukbt)' => 'u_ukbt',
                 'm-(OSRS)' => 'm_game_currency',
                 'r-(RS3)' => 'r_rs3',
                 default => null,

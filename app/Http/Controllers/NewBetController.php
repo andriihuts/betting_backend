@@ -48,14 +48,6 @@ class NewBetController extends Controller
             // Calculate total amount for all splitters of the bet
             $splitter_amount_total = $active_bet->bet_splitters->sum('amount');
             $real_money = (float)$active_bet->amount - $splitter_amount_total;
-
-            // Determine currency multiplier based on the currency type
-            // $multiplier = match ($active_bet->currency) {
-            //     'm-(OSRS)' => $this->mValue,
-            //     'r-(RS3)' => $this->rValue,
-            //     'c-(CAD)' => 0.75,
-            //     default => 1
-            // };
             $multiplier = $active_bet->rate;
             // Calculate net profit based on the bet's status and live state
             $netProfit = match (true) {
@@ -90,68 +82,6 @@ class NewBetController extends Controller
 
         return response()->json([$active_json_data]);
     }
-
-    /**
-     * Store a newly created bet in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'slip' => 'required|max:255',
-    //         'odds' => 'required|max:255',
-    //         'amount' => 'required',
-    //         'currency' => 'required'
-    //     ], $messages = [
-    //         'required' => 'The :attribute field is required.',
-    //         'unique' => 'The :attribute field should be unique.',
-    //         'max' => 'The :attribute field should be maximum 255.'
-    //     ]);
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status'=>false,
-    //             'message'=>$validator->errors()->all(),
-    //         ]);
-    //     }
-    //     $requestData = $request->all();
-        
-    //     switch ($requestData['currency']) {
-    //         case 'm-(OSRS)':
-    //             $multiplier = $this->mValue;
-    //             break;
-    //         case 'c-(CAD)':
-    //             $multiplier = 0.75;
-    //             break;
-    //         case 'r-(RS3)':
-    //             $multiplier = $this->rValue;
-    //             break;
-    //         default:
-    //             $multiplier = 1;
-    //             break;
-    //     }
-        
-    //     $requestData['rate'] = $multiplier; // Add the multiplier as the rate
-    //     $temp = NewBet::create($requestData);
-    //     Log::info('new bet request data>>>>>', ['requestData' => $requestData, 'create status' => $temp]);
-
-    //     if ($request->has('splitters1') && is_array($request->splitters1)) {
-    //         $splits = $request->splitters1;
-
-    //         foreach($splits as $split){
-    //             $splitter = new Splitter;
-    //             $splitter->customer_id = $split['customer_id'];
-    //             $splitter->amount = $split['amount'];
-    //             $splitter->new_bets_id = NewBet::latest()->first()->id;
-    //             $splitter->save();
-    //         }
-    //     }
-    //     return response()->json([
-    //         'status'=>true,
-    //         'message'=>'Ok'
-    //     ]);
-    // }
     
     public function store(Request $request)
     {
@@ -184,6 +114,7 @@ class NewBetController extends Controller
             $multiplier = match ($requestData['currency']) {
                 'm-(OSRS)' => $this->mValue,
                 'c-(CAD)' => 0.75,
+                'u-(ukbt)' => 1.33,
                 'r-(RS3)' => $this->rValue,
                 default => 1,
             };
@@ -296,7 +227,7 @@ class NewBetController extends Controller
                 'b-(bitcoin)' => 'b_bitcoin',
                 'e-(ethereum)' => 'e_ethereum',
                 'c-(CAD)' => 'c_card',
-                'u-(usdt)' => 'u_usdt',
+                'u-(ukbt)' => 'u_ukbt',
                 'm-(OSRS)' => 'm_game_currency',
                 'r-(RS3)' => 'r_rs3',
                 default => null,
@@ -310,14 +241,6 @@ class NewBetController extends Controller
         // Calculate total splitter money and real amount
         $splitter_amount_total = $betSplitters->sum('amount');
         $real_amount = $update_active_bet->amount - $splitter_amount_total;
-
-        // Calculate single_perfect_money based on currency and status
-        // $multiplier = match ($update_active_bet->currency) {
-        //     'm-(OSRS)' => $this->mValue,
-        //     'r-(RS3)' => $this->rValue,
-        //     'c-(CAD)' => 0.75,
-        //     default => 1,
-        // };
         $multiplier = $update_active_bet->rate;
 
         $single_perfect_money = match (true) {
@@ -344,7 +267,7 @@ class NewBetController extends Controller
                 'b-(bitcoin)' => 'b_bitcoin',
                 'e-(ethereum)' => 'e_ethereum',
                 'c-(CAD)' => 'c_card',
-                'u-(usdt)' => 'u_usdt',
+                'u-(ukbt)' => 'u_ukbt',
                 'm-(OSRS)' => 'm_game_currency',
                 'r-(RS3)' => 'r_rs3',
                 default => null,
@@ -386,14 +309,6 @@ class NewBetController extends Controller
         // Calculate total amount for all splitters
         $splitter_amount_total = $singBet->bet_splitters->sum('amount');
         $real_amount = $singBet->amount - $splitter_amount_total;
-
-        // Determine currency multiplier based on type
-        // $multiplier = match ($singBet->currency) {
-        //     'm-(OSRS)' => $this->mValue,
-        //     'r-(RS3)' => $this->rValue,
-        //     'c-(CAD)' => 0.75,
-        //     default => 1,
-        // };
         $multiplier = $singBet->rate;
         // Calculate net profit based on status and live status
         $netProfit = match (true) {
@@ -525,14 +440,16 @@ class NewBetController extends Controller
     {
         $all_new_bets = NewBet::all();
 
-        $perfect_win_money = $all_new_bets->where('currency', '<>', 'm-(OSRS)')->where('currency', '<>', 'c-(CAD)')->where('currency', '<>', 'r-(RS3)')->where('status', 1)->sum('amount');
+        $perfect_win_money = $all_new_bets->where('currency', '<>', 'm-(OSRS)')->where('currency', '<>', 'c-(CAD)')->where('currency', '<>', 'r-(RS3)')->where('currency', '<>', 'u-(ukbt)')->where('status', 1)->sum('amount');
         $game_win_money = $all_new_bets->where('currency', '=', 'm-(OSRS)')->where('status', 1)->sum('amount');
         $cad_win_money = $all_new_bets->where('currency', '=', 'c-(CAD)')->where('status', 1)->sum('amount');
+        $ukbt_win_money = $all_new_bets->where('currency', '=', 'u-(ukbt)')->where('status', 1)->sum('amount');
         $rs3_win_money = $all_new_bets->where('currency', '=', 'r-(RS3)')->where('status', 1)->sum('amount');
 
-        $perfect_lose_moneys = 0.95*$all_new_bets->where('currency', '<>', 'm-(OSRS)')->where('currency', '<>', 'c-(CAD)')->where('currency', '<>', 'r-(RS3)')->where('status', 0)->sum('amount');
+        $perfect_lose_moneys = 0.95*$all_new_bets->where('currency', '<>', 'm-(OSRS)')->where('currency', '<>', 'c-(CAD)')->where('currency', '<>', 'r-(RS3)')->where('currency', '<>', 'u-(ukbt)')->where('status', 0)->sum('amount');
         $game_lose_moneys = 0.95*$all_new_bets->where('currency', '=', 'm-(OSRS)')->where('status', 0)->sum('amount');
         $cad_lose_moneys = 0.95*$all_new_bets->where('currency', '=', 'c-(CAD)')->where('status', 0)->sum('amount');
+        $ukbt_lose_moneys = 0.95*$all_new_bets->where('currency', '=', 'u-(ukbt)')->where('status', 0)->sum('amount');
         $rs3_lose_moneys = 0.95*$all_new_bets->where('currency', '=', 'r-(RS3)')->where('status', 0)->sum('amount');
 
         $cus_total_money = 0;
@@ -543,7 +460,9 @@ class NewBetController extends Controller
                         round($rs3_win_money*$this->rValue, 2) - 
                         round($rs3_lose_moneys*$this->rValue, 2) + 
                         round($cad_win_money*0.75, 2) - 
-                        round($cad_lose_moneys*0.75, 2);
+                        round($cad_lose_moneys*0.75, 2) + 
+                        round($ukbt_win_money*1.33, 2) - 
+                        round($ukbt_lose_moneys*1.33, 2);
 
         return response()->json([
             'status'=>true,

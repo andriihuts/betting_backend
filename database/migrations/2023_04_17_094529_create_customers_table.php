@@ -20,7 +20,7 @@ return new class extends Migration
             $table->double('b_bitcoin', 8, 2)->comment('currency type is bit coin')->nullable(true)->default(0);
             $table->double('m_game_currency', 8, 2)->comment('currency type is game currency')->nullable(true)->default(0);
             $table->double('c_card', 8, 2)->comment('currency type is CAD')->nullable(true)->default(0);
-            $table->double('u_usdt', 8, 2)->comment('currency type is usdt')->nullable(true)->default(0);
+            $table->double('u_ukbt', 8, 2)->comment('currency type is ukbt')->nullable(true)->default(0);
             $table->double('l_litecoin', 8, 2)->comment('currency type is litecoin')->nullable(true)->default(0);
             $table->tinyInteger('flag'); //1: customer, 0: hosts
             $table->softDeletes($column = 'deleted_at', $precision = 0);

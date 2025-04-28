@@ -52,7 +52,7 @@ class CustomerController extends Controller
                     } elseif ($bet->status == 0) {
                         $amount = round($real_money * ($bet->odds - 1) * (-1) * $multiplier, 2);
                     }
-                    
+
                     // Assign to appropriate currency total
                     switch ($bet->currency) {
                         case 'm-(OSRS)':
@@ -72,7 +72,6 @@ class CustomerController extends Controller
                 
                 $total_sports += array_sum($totals);
                 Log::info('total_sports', ['total_sports' => $total_sports]);
-    
                 $customer_data[] = [
                     'id' => $customer->id,
                     'name' => $customer->name,
@@ -84,7 +83,7 @@ class CustomerController extends Controller
                     'b_bitcoin' => $customer->b_bitcoin,
                     'e_ethereum' => $customer->e_ethereum,
                     'c_card' => $customer->c_card,
-                    'u_usdt' => $customer->u_usdt,
+                    'u_ukbt' => $customer->u_ukbt,
                     'r_rs3' => $customer->r_rs3,
                     'm_game_currency' => $customer->m_game_currency,
                 ];
@@ -98,7 +97,7 @@ class CustomerController extends Controller
                         (float)$customer->a_apply_pay +
                             (float)$customer->b_bitcoin +
                             (float)$customer->e_ethereum +
-                            (float)$customer->u_usdt,
+                            (float)$customer->u_ukbt,
                         2
                     ),
                     'total_game' => round((float)$customer->m_game_currency, 2),
@@ -108,7 +107,7 @@ class CustomerController extends Controller
                     'b_bitcoin' => $customer->b_bitcoin,
                     'e_ethereum' => $customer->e_ethereum,
                     'c_card' => $customer->c_card,
-                    'u_usdt' => $customer->u_usdt,
+                    'u_ukbt' => $customer->u_ukbt,
                     'r_rs3' => $customer->r_rs3,
                     'm_game_currency' => $customer->m_game_currency,
                 ];
@@ -270,7 +269,7 @@ class CustomerController extends Controller
         $update_Customer->b_bitcoin = $request->b_bitcoin ?? 0;
         $update_Customer->e_ethereum = $request->e_ethereum ?? 0;
         $update_Customer->c_card = $request->c_card ?? 0;
-        $update_Customer->u_usdt = $request->u_usdt ?? 0;
+        $update_Customer->u_ukbt = $request->u_ukbt ?? 0;
         $update_Customer->r_rs3 = $request->r_rs3 ?? 0;
         $update_Customer->m_game_currency = $request->m_game_currency ?? 0;
         $update_Customer->save();
@@ -281,7 +280,7 @@ class CustomerController extends Controller
             'b_bitcoin_history' => 'Bitcoin',
             'e_ethereum_history' => 'Ethereum',
             'c_card_history' => 'CAD',
-            'u_usdt_history' => 'USDT',
+            'u_ukbt_history' => 'UKBT',
             'm_game_currency_history' => 'm',
             'r_rs3_history' => 'RS3'
         ];
@@ -290,7 +289,7 @@ class CustomerController extends Controller
         $transactions = [];
         foreach ($request->all() as $key => $item) {
             // Skip non-transaction keys
-            if (in_array($key, ['id', 'a_apply_pay', 'b_bitcoin', 'e_ethereum', 'c_card', 'u_usdt', 'm_game_currency', 'r_rs3'])) {
+            if (in_array($key, ['id', 'a_apply_pay', 'b_bitcoin', 'e_ethereum', 'c_card', 'u_ukbt', 'm_game_currency', 'r_rs3'])) {
                 continue;
             }
 
@@ -343,7 +342,7 @@ class CustomerController extends Controller
             'b_bitcoin1' => $customer->b_bitcoin ?? 0,
             'e_ethereum1' => $customer->e_ethereum ?? 0,
             'c_card1' => $customer->c_card ?? 0,
-            'u_usdt1' => $customer->u_usdt ?? 0,
+            'u_ukbt1' => $customer->u_ukbt ?? 0,
             'r_rs3_1' => $customer->r_rs3 ?? 0,
             'm_game_currency1' => $customer->m_game_currency ?? 0,
 
@@ -351,7 +350,7 @@ class CustomerController extends Controller
             'b_bitcoin2' => 0,
             'e_ethereum2' => 0,
             'c_card2' => 0,
-            'u_usdt2' => 0,
+            'u_ukbt2' => 0,
             'r_rs3_2' => 0,
             'm_game_currency2' => 0,
 

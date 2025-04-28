@@ -86,7 +86,7 @@ class HomeController extends Controller
                 'b_bitcoin' => $customer->b_bitcoin,
                 'e_ethereum' => $customer->e_ethereum,
                 'c_card' => $customer->c_card,
-                'u_usdt' => $customer->u_usdt,
+                'u_ukbt' => $customer->u_ukbt,
                 'r_rs3' => $customer->r_rs3,
                 'm_game_currency' => $customer->m_game_currency,
             ];

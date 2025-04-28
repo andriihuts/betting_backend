@@ -86,7 +86,7 @@ class SplitterController extends Controller
                     'b_bitcoin' => $customer->b_bitcoin,
                     'e_ethereum' => $customer->e_ethereum,
                     'c_card' => $customer->c_card,
-                    'u_usdt' => $customer->u_usdt,
+                    'u_ukbt' => $customer->u_ukbt,
                     'r_rs3' => $customer->r_rs3,
                     'm_game_currency' => $customer->m_game_currency,
                 ];
@@ -101,7 +101,7 @@ class SplitterController extends Controller
                         (float)$customer->a_apply_pay +
                             (float)$customer->b_bitcoin +
                             (float)$customer->e_ethereum +
-                            (float)$customer->u_usdt,
+                            (float)$customer->u_ukbt,
                         2
                     ),
                     'total_game' => round((float)$customer->m_game_currency, 2),
@@ -111,7 +111,7 @@ class SplitterController extends Controller
                     'b_bitcoin' => $customer->b_bitcoin,
                     'e_ethereum' => $customer->e_ethereum,
                     'c_card' => $customer->c_card,
-                    'u_usdt' => $customer->u_usdt,
+                    'u_ukbt' => $customer->u_ukbt,
                     'r_rs3' => $customer->r_rs3,
                     'm_game_currency' => $customer->m_game_currency,
                 ];

@@ -17,7 +17,7 @@ class Customer extends Model
         'b_bitcoin',
         'm_game_currency',
         'c_card',
-        'u_usdt',
+        'u_ukbt',
         'l_litecoin',        
     ];
 

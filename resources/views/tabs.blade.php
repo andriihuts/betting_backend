@@ -104,7 +104,7 @@
                 <div class="modal-body">
                     <form id="updateForm">
                         <input type="hidden" id="host_id" name="id">
-                        @foreach (['a_apply_pay' => 'a(ApplePay)', 'b_bitcoin' => 'b(Bitcoin)', 'e_ethereum' => 'e(Ethereum)', 'c_card' => 'c(CAD)', 'u_usdt' => 'u(USDT)', 'm_game_currency' => 'm(OSRS)', 'r_rs3' => 'r(RS3)'] as $key => $label)
+                        @foreach (['a_apply_pay' => 'a(ApplePay)', 'b_bitcoin' => 'b(Bitcoin)', 'e_ethereum' => 'e(Ethereum)', 'c_card' => 'c(CAD)', 'u_ukbt' => 'u(UKBT)', 'm_game_currency' => 'm(OSRS)', 'r_rs3' => 'r(RS3)'] as $key => $label)
                             <div class="row">
                                 <div class="col-md-2 mr-1">
                                     <label class="col-form-label c-font-size-12">{{ $label }}:</label>

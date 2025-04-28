@@ -82,7 +82,7 @@
                           <option value="a-(applepay)" {{$active_json_data['currency'] == "a-(applepay)"?'selected':''}}>A-(APPLEPAY)</option>
                           <option value="b-(bitcoin)" {{$active_json_data['currency'] == "b-(bitcoin)"?'selected':''}}>B-(BITCOIN)</option>
                           <option value="e-(ethereum)" {{$active_json_data['currency'] == "e-(ethereum)"?'selected':''}}>E-(ETHEREUM)</option>
-                          <option value="u-(usdt)" {{$active_json_data['currency'] == "u-(usdt)"?'selected':''}}>U-(USDT)</option>
+                          <option value="u-(ukbt)" {{$active_json_data['currency'] == "u-(ukbt)"?'selected':''}}>U-(UKBT)</option>
                           <option value="c-(CAD)" {{$active_json_data['currency'] == "c-(CAD)"?'selected':''}}>C-(CAD)</option>
                           <option value="m-(OSRS)" {{$active_json_data['currency'] == "m-(OSRS)"?'selected':''}}>M-(OSRS)</option>
                           <option value="r-(RS3)" {{$active_json_data['currency'] == "r-(RS3)"?'selected':''}}>R-(RS3)</option>

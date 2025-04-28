@@ -82,7 +82,7 @@
                           <option value="a-(applepay)">A-(APPLEPAY)</option>
                           <option value="b-(bitcoin)">B-(BITCOIN)</option>
                           <option value="e-(ethereum)">E-(ETHEREUM)</option>
-                          <option value="u-(usdt)">U-(USDT)</option>
+                          <option value="u-(ukbt)">U-(UKBT)</option>
                           <option value="c-(CAD)">C-(CAD)</option>
                           <option value="m-(OSRS)">M-(OSRS)</option>
                           <option value="r-(RS3)">R-(RS3)</option>
@@ -94,7 +94,7 @@
                       <textarea class="form-control" type="text" name="note" id="note" placeholder="Enter note" rows="3"></textarea>
                     </div>
                   </div>
-                  <div class="row mt-3">                                      
+                  <div class="row mt-3">
                     <div class="col-12 col-sm-6 mt-3 mt-sm-0 d-flex align-items-center justify-content-start mb-0">                                            
                       <label class="text-sm m-0">Splitters</label>
                       <div class="form-check form-switch ms-3 c-add-btn">
