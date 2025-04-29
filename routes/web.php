@@ -68,7 +68,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('transaction', [PaymentController::class, 'showTransaction'])->name('payment_transaction');
 
         // Splitters Routes
-        Route::get('all_splitters', [SplitterController::class, 'getSplitters'])->name('misc');
         Route::get('all_customer_splitters', [SplitterController::class, 'getCustomerAndSplitterData'])->name('customer_splitter_data');
 
         // Currency Routes

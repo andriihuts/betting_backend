@@ -101,7 +101,7 @@ class SplitterController extends Controller
                         (float)$customer->a_apply_pay +
                             (float)$customer->b_bitcoin +
                             (float)$customer->e_ethereum +
-                            (float)$customer->u_ukbt,
+                            (float)$customer->u_ukbt * 1.33,
                         2
                     ),
                     'total_game' => round((float)$customer->m_game_currency, 2),

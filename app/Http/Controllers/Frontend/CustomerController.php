@@ -97,7 +97,7 @@ class CustomerController extends Controller
                         (float)$customer->a_apply_pay +
                             (float)$customer->b_bitcoin +
                             (float)$customer->e_ethereum +
-                            (float)$customer->u_ukbt,
+                            (float)$customer->u_ukbt * 1.33,
                         2
                     ),
                     'total_game' => round((float)$customer->m_game_currency, 2),
@@ -122,15 +122,6 @@ class CustomerController extends Controller
         if (!$net_money) {
             NetIRC::create(['net' => $total_sports, 'irc' => 0]);
         }
-
-        // Return combined response
-        // return response()->json([
-        //     'customers' => $customer_data,
-        //     'hosts' => $host_data,
-        //     'total' => round($total_sports, 2),
-        //     'net' => $net_money_value,
-        //     'irc' => $irc_money_value,
-        // ]);
 
         $customers = $customer_data;
         $hosts = $host_data;
