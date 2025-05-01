@@ -171,34 +171,52 @@ class HomeController extends Controller
         ];
 
         // 3. Generate Weekly Data (with empty weeks if not found)
-        $start = now()->startOfMonth()->format('Y-m-d H:i:s');
-        $end = now()->endOfMonth()->format('Y-m-d H:i:s');
+        $end = now()->endOfWeek(); // Last day of the current week (Sunday)
+        $start = now()->subWeeks(4)->startOfWeek(); // First day 3 weeks ago (Monday)
+
+        $startFormatted = $start->format('Y-m-d H:i:s');
+        $endFormatted = $end->format('Y-m-d H:i:s');
+
+        // Step 2: Query weekly data with ranking
         $weeklyData = NetIRC::from(DB::raw("
-            (
+                (
                     SELECT 
                         *,
-                        (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1) AS week_number,
+                        WEEK(created_at, 1) AS iso_week,
+                        YEAR(created_at) AS year,
+                        DATE_SUB(DATE(created_at), INTERVAL WEEKDAY(created_at) + 1 DAY) AS week_ending,
                         ROW_NUMBER() OVER (
-                            PARTITION BY (WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAY(created_at) - 1 DAY), 1) + 1)
+                            PARTITION BY YEAR(created_at), WEEK(created_at, 1)
                             ORDER BY created_at DESC
                         ) AS rn
                     FROM net_i_r_c_s
-                    WHERE created_at BETWEEN '$start' AND '$end'
+                    WHERE created_at BETWEEN '$startFormatted' AND '$endFormatted'
                 ) AS ranked_weeks
             "))
-            ->select('week_number as week', 'net as latest_net')
+            ->selectRaw("DATE_FORMAT(week_ending, '%Y-%m-%d') as week_end")
+            ->addSelect('net as latest_net')
             ->where('rn', 1)
-            ->orderBy('week')
             ->get()
-            ->pluck('latest_net', 'week');
+            ->mapWithKeys(function ($item) {
+                return [$item->week_end => $item->latest_net];
+            });
 
-        $weeksInMonth = now()->endOfMonth()->format('W') - now()->startOfMonth()->format('W') + 1;
-        $weeksOfMonth = range(1, $weeksInMonth);
+        // Step 3: Build the labels for the last 4 ISO weeks
+        $weeksOfMonth = [];
+        for ($i = 4; $i >= 0; $i--) {
+            $weekEnd = now()->subWeeks($i)->endOfWeek(0)->format('Y-m-d');
+            $weeksOfMonth[] = $weekEnd;
+        }
 
+        // Step 4: Format data
+        $lastValid = 0;
         $weeklyDataFormatted = [
             'labels' => $weeksOfMonth,
-            'data' => array_map(function ($week) use ($weeklyData) {
-                return $weeklyData[$week] ?? 0; // Provide 0 if missing
+            'data' => array_map(function ($week) use ($weeklyData, &$lastValid) {
+                if (!empty($weeklyData[$week])) {
+                    $lastValid = $weeklyData[$week];
+                }
+                return $lastValid;
             }, $weeksOfMonth),
         ];
 
