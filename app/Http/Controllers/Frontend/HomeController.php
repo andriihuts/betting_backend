@@ -147,7 +147,7 @@ class HomeController extends Controller
 
         for ($i = 11; $i >= 0; $i--) {
             $monthName = now()->subMonths($i)->format('M Y'); // e.g. "May 2025"
-            $lastDateOfMonth = now()->subMonths($i)->endOfMonth()->format('Y-m-d');
+            $lastDateOfMonth = now()->subMonths($i)->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
 
             $netOfLastDateOfMonth = DB::table('net_i_r_c_s')
                 ->whereDate('created_at', '<=', $lastDateOfMonth)
@@ -169,7 +169,7 @@ class HomeController extends Controller
         ];
 
         for ($i = 4; $i >= 0; $i--) {
-            $weekEnd = now()->subWeeks($i)->endOfWeek()->format('Y-m-d');
+            $weekEnd = now()->subWeeks($i)->endOfWeek()->endOfDay()->format('Y-m-d H:i:s');
             $today = now()->format('Y-m-d');
             if($today < $weekEnd){
                 $weekEnd = $today;
@@ -195,7 +195,7 @@ class HomeController extends Controller
 
         for ($i = 6; $i >= 0; $i--) {
             $netToday = DB::table('net_i_r_c_s')
-                ->whereDate('created_at', '<=',  now()->subDays($i)->format('Y-m-d'))
+                ->whereDate('created_at', '<=',  now()->subDays($i)->endOfDay()->format('Y-m-d H:i:s'))
                 ->orderByDesc('created_at')
                 ->value('net');
             $dailyDataFormatted['labels'][] = now()->subDays($i)->format('D'); // Mon, Tue, etc.
