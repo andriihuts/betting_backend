@@ -140,85 +140,52 @@ class HomeController extends Controller
         ];
 
         // 2. Generate Monthly Data (with empty months if not found)
-        $currentYear = now()->year;
-        $monthlyData = NetIRC::from(DB::raw("
-            (
-                    SELECT 
-                        *,
-                        MONTH(created_at) AS month,
-                        ROW_NUMBER() OVER (
-                            PARTITION BY MONTH(created_at)
-                            ORDER BY created_at DESC
-                        ) AS rn
-                    FROM net_i_r_c_s
-                    WHERE YEAR(created_at) = $currentYear
-                ) AS ranked_months
-            "))
-            ->select('month', 'net as latest_net')
-            ->where('rn', 1)
-            ->orderBy('month')
-            ->get()
-            ->pluck('latest_net', 'month');
-
-        $months = range(1, 12); // 1 to 12 for all months of the year
         $monthlyDataFormatted = [
-            'labels' => array_map(function ($month) {
-                return date('M', mktime(0, 0, 0, $month, 10)); // Convert month number to string
-            }, $months),
-            'data' => array_map(function ($month) use ($monthlyData) {
-                return $monthlyData[$month] ?? 0; // Provide 0 if the month data does not exist
-            }, $months),
+            'labels' => [],
+            'data' => [],
         ];
 
-        // 3. Generate Weekly Data (with empty weeks if not found)
-        $end = now()->endOfWeek(); // Last day of the current week (Sunday)
-        $start = now()->subWeeks(4)->startOfWeek(); // First day 3 weeks ago (Monday)
+        for ($i = 11; $i >= 0; $i--) {
+            $monthName = now()->subMonths($i)->format('M Y'); // e.g. "May 2025"
+            $lastDateOfMonth = now()->subMonths($i)->endOfMonth()->format('Y-m-d');
 
-        $startFormatted = $start->format('Y-m-d H:i:s');
-        $endFormatted = $end->format('Y-m-d H:i:s');
+            $netOfLastDateOfMonth = DB::table('net_i_r_c_s')
+                ->whereDate('created_at', '<=', $lastDateOfMonth)
+                ->orderByDesc('created_at')
+                ->value('net');
 
-        // Step 2: Query weekly data with ranking
-        $weeklyData = NetIRC::from(DB::raw("
-                (
-                    SELECT 
-                        *,
-                        WEEK(created_at, 1) AS iso_week,
-                        YEAR(created_at) AS year,
-                        DATE_SUB(DATE(created_at), INTERVAL WEEKDAY(created_at) + 1 DAY) AS week_ending,
-                        ROW_NUMBER() OVER (
-                            PARTITION BY YEAR(created_at), WEEK(created_at, 1)
-                            ORDER BY created_at DESC
-                        ) AS rn
-                    FROM net_i_r_c_s
-                    WHERE created_at BETWEEN '$startFormatted' AND '$endFormatted'
-                ) AS ranked_weeks
-            "))
-            ->selectRaw("DATE_FORMAT(week_ending, '%Y-%m-%d') as week_end")
-            ->addSelect('net as latest_net')
-            ->where('rn', 1)
-            ->get()
-            ->mapWithKeys(function ($item) {
-                return [$item->week_end => $item->latest_net];
-            });
+            if($netOfLastDateOfMonth == 0){
+                break;
+            }
 
-        // Step 3: Build the labels for the last 4 ISO weeks
-        $weeksOfMonth = [];
-        for ($i = 4; $i >= 0; $i--) {
-            $weekEnd = now()->subWeeks($i)->endOfWeek(0)->format('Y-m-d');
-            $weeksOfMonth[] = $weekEnd;
+            $monthlyDataFormatted['labels'][] = $monthName;
+            $monthlyDataFormatted['data'][] = $netOfLastDateOfMonth ?? 0;
         }
 
-        // Step 4: Format data
-        $lastValid = 0;
+        // 3. Generate Weekly Data (with empty weeks if not found)
         $weeklyDataFormatted = [
-            'labels' => $weeksOfMonth,
-            'data' => array_map(function ($week) use ($weeklyData, &$lastValid) {
-                if (!empty($weeklyData[$week])) {
-                    $lastValid = $weeklyData[$week];
-                }
-                return $lastValid;
-            }, $weeksOfMonth),
+            'labels' => [],
+            'data' => [],
         ];
+
+        for ($i = 4; $i >= 0; $i--) {
+            $weekEnd = now()->subWeeks($i)->endOfWeek()->format('Y-m-d');
+            $today = now()->format('Y-m-d');
+            if($today < $weekEnd){
+                $weekEnd = $today;
+            }
+            $netWeekend = DB::table('net_i_r_c_s')
+                ->whereDate('created_at', '<=', $weekEnd)
+                ->orderByDesc('created_at')
+                ->value('net');
+
+            if($netWeekend == 0){
+                break;
+            }
+            
+            $weeklyDataFormatted['labels'][] = $weekEnd;
+            $weeklyDataFormatted['data'][] = $netWeekend ?? 0;
+        }
 
         // 4. Generate Daily Data (with empty days if not found)
         $dailyDataFormatted = [
@@ -227,10 +194,8 @@ class HomeController extends Controller
         ];
 
         for ($i = 6; $i >= 0; $i--) {
-            $j = $i;
-
             $netToday = DB::table('net_i_r_c_s')
-                ->whereDate('created_at', '<=',  now()->subDays($j)->format('Y-m-d'))
+                ->whereDate('created_at', '<=',  now()->subDays($i)->format('Y-m-d'))
                 ->orderByDesc('created_at')
                 ->value('net');
             $dailyDataFormatted['labels'][] = now()->subDays($i)->format('D'); // Mon, Tue, etc.
