@@ -221,55 +221,22 @@ class HomeController extends Controller
         ];
 
         // 4. Generate Daily Data (with empty days if not found)
-        $start = now()->subDays(6)->startOfDay()->format('Y-m-d H:i:s'); // 6 days ago + today = 7 days
-        $end = now()->endOfDay()->format('Y-m-d H:i:s'); // till now
-
-        $dailyData = NetIRC::from(DB::raw("
-                (
-                    SELECT 
-                        id,
-                        created_at,
-                        net,
-                        ROW_NUMBER() OVER (
-                            PARTITION BY DATE(created_at)
-                            ORDER BY created_at DESC
-                        ) AS rn
-                    FROM net_i_r_c_s
-                    WHERE created_at BETWEEN '$start' AND '$end'
-                ) AS ranked_days
-            "))
-            ->selectRaw('
-                DATE(created_at) as day_date,
-                net as latest_net
-            ')
-            ->where('rn', 1)
-            ->orderBy('day_date')
-            ->get()
-            ->pluck('latest_net', 'day_date');
-
-        // Build last 7 days
-        $days = collect();
-        for ($i = 6; $i >= 0; $i--) {
-            $days->push(now()->subDays($i)->format('Y-m-d'));
-        }
-
-        $lastNet = 0;
         $dailyDataFormatted = [
             'labels' => [],
             'data' => [],
         ];
 
-        foreach ($days as $day) {
-            $dailyDataFormatted['labels'][] = date('D', strtotime($day)); // Mon, Tue, etc.
+        for ($i = 6; $i >= 0; $i--) {
+            $j = $i;
 
-            if (isset($dailyData[$day])) {
-                $lastNet = $dailyData[$day];
-            }
-
-            $dailyDataFormatted['data'][] = $lastNet;
+            $netToday = DB::table('net_i_r_c_s')
+                ->whereDate('created_at', '<=',  now()->subDays($j)->format('Y-m-d'))
+                ->orderByDesc('created_at')
+                ->value('net');
+            $dailyDataFormatted['labels'][] = now()->subDays($i)->format('D'); // Mon, Tue, etc.
+            $dailyDataFormatted['data'][] = $netToday ?? 0;
         }
 
-
-        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'dailyDataFormatted', 'weeklyDataFormatted'));
+        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'weeklyDataFormatted', 'dailyDataFormatted'));
     }
 }
