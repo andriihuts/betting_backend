@@ -170,6 +170,7 @@ class HomeController extends Controller
 
         for ($i = 4; $i >= 0; $i--) {
             $weekEnd = now()->subWeeks($i)->endOfWeek()->endOfDay()->format('Y-m-d H:i:s');
+            $weekEndLavel = now()->subWeeks($i)->endOfWeek()->format('Y-m-d');
             $today = now()->format('Y-m-d');
             if($today < $weekEnd){
                 $weekEnd = $today;
@@ -183,7 +184,7 @@ class HomeController extends Controller
                 break;
             }
             
-            $weeklyDataFormatted['labels'][] = $weekEnd;
+            $weeklyDataFormatted['labels'][] = $weekEndLavel;
             $weeklyDataFormatted['data'][] = $netWeekend ?? 0;
         }
 
