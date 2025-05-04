@@ -153,10 +153,6 @@ class HomeController extends Controller
                 ->orderByDesc('created_at')
                 ->value('net');
 
-            if($netOfLastDateOfMonth == 0 || $netOfLastDateOfMonth == null){
-                continue;
-            }
-
             $monthlyDataFormatted['labels'][] = $monthName;
             $monthlyDataFormatted['data'][] = $netOfLastDateOfMonth ?? 0;
         }
@@ -178,10 +174,6 @@ class HomeController extends Controller
                 ->whereDate('created_at', '<=', $weekEnd)
                 ->orderByDesc('created_at')
                 ->value('net');
-
-            if($netWeekend == 0 || $netWeekend == null){
-                continue;
-            }
             
             $weeklyDataFormatted['labels'][] = $weekEndLavel;
             $weeklyDataFormatted['data'][] = $netWeekend ?? 0;
