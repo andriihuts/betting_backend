@@ -148,14 +148,13 @@ class HomeController extends Controller
         for ($i = 11; $i >= 0; $i--) {
             $monthName = now()->subMonths($i)->format('M Y'); // e.g. "May 2025"
             $lastDateOfMonth = now()->subMonths($i)->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
-
             $netOfLastDateOfMonth = DB::table('net_i_r_c_s')
                 ->whereDate('created_at', '<=', $lastDateOfMonth)
                 ->orderByDesc('created_at')
                 ->value('net');
 
-            if($netOfLastDateOfMonth == 0){
-                break;
+            if($netOfLastDateOfMonth == 0 || $netOfLastDateOfMonth == null){
+                continue;
             }
 
             $monthlyDataFormatted['labels'][] = $monthName;
@@ -180,8 +179,8 @@ class HomeController extends Controller
                 ->orderByDesc('created_at')
                 ->value('net');
 
-            if($netWeekend == 0){
-                break;
+            if($netWeekend == 0 || $netWeekend == null){
+                continue;
             }
             
             $weeklyDataFormatted['labels'][] = $weekEndLavel;
