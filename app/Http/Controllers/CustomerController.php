@@ -229,27 +229,27 @@ class CustomerController extends Controller
                 ];
             }
             if ($customer->flag == 0) {
-            $host_data[] = [
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'total_perfect' => round(
-                    (float)$customer->a_apply_pay +
-                        (float)$customer->b_bitcoin +
-                        (float)$customer->e_ethereum +
-                        (float)$customer->u_ukbt,
-                    2
-                ),
-                'total_game' => round((float)$customer->m_game_currency, 2),
-                'total_cad' => round((float)$customer->c_card, 2),
-                'total_rs3' => round((float)$customer->r_rs3, 2),
-                'a_apply_pay' => $customer->a_apply_pay,
-                'b_bitcoin' => $customer->b_bitcoin,
-                'e_ethereum' => $customer->e_ethereum,
-                'c_card' => $customer->c_card,
-                'u_ukbt' => $customer->u_ukbt,
-                'r_rs3' => $customer->r_rs3,
-                'm_game_currency' => $customer->m_game_currency,
-            ];
+                $host_data[] = [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'total_perfect' => round(
+                        (float)$customer->a_apply_pay +
+                            (float)$customer->b_bitcoin +
+                            (float)$customer->e_ethereum +
+                            (float)$customer->u_ukbt * 1.33,
+                        2
+                    ),
+                    'total_game' => round((float)$customer->m_game_currency, 2),
+                    'total_cad' => round((float)$customer->c_card, 2),
+                    'total_rs3' => round((float)$customer->r_rs3, 2),
+                    'a_apply_pay' => $customer->a_apply_pay,
+                    'b_bitcoin' => $customer->b_bitcoin,
+                    'e_ethereum' => $customer->e_ethereum,
+                    'c_card' => $customer->c_card,
+                    'u_ukbt' => $customer->u_ukbt,
+                    'r_rs3' => $customer->r_rs3,
+                    'm_game_currency' => $customer->m_game_currency,
+                ];
             }
         }
 

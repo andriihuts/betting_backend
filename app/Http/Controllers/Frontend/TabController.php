@@ -24,7 +24,7 @@ class TabController extends Controller
 
         foreach($all_hosts as $key_splitter=>$customer){       
             $customer_current = (float)$customer->a_apply_pay + (float)$customer->b_bitcoin 
-                          + (float)$customer->e_ethereum + (float)$customer->u_ukbt;     
+                          + (float)$customer->e_ethereum + (float)$customer->u_ukbt * 1.33;     
             //$sel_new_bets = $customer->new_bets;            
             $host_json_data[$key_splitter] = [
                 'id' => $customer->id,
