@@ -19,9 +19,16 @@ class LogBookController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120', // max 5MB
+            'patient_name' => 'required|string|max:255',
+            'mrn' => 'required|string|max:255',
+            'dob' => 'required|date',
+            'procedure_date' => 'required|date',
+            'procedure_type' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+            'notes' => 'nullable|string',
+            'procedure_type_id' => 'required|integer|exists:procedure_types,id',
+            'hospital_id' => 'required|integer|exists:hospitals,id',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png|max:5120', // max 5MB
         ]);
 
         // Handle file upload if present
@@ -38,35 +45,43 @@ class LogBookController extends Controller
         ], 201);
     }
 
-    public function show(Logbook $logBook)
+    public function show(Logbook $logbook)
     {
-        return response()->json(['log_book' => $logBook], 200);
+        return response()->json(['log_book' => $logbook], 200);
     }
 
-    public function update(Request $request, Logbook $logBook)
+    public function update(Request $request, LogBook $logbook)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120', // max 5MB
+            'patient_name' => 'sometimes|required|string|max:255',
+            'mrn' => 'sometimes|required|string|max:255',
+            'dob' => 'sometimes|required|date',
+            'procedure_date' => 'sometimes|required|date',
+            'procedure_type' => 'sometimes|required|string|max:255',
+            'role' => 'sometimes|required|string|max:255',
+            'notes' => 'nullable|string',
+            'procedure_type_id' => 'sometimes|required|integer|exists:procedure_types,id',
+            'hospital_id' => 'sometimes|required|integer|exists:hospitals,id',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
         ]);
 
+        // Replace attachment if uploaded
         if ($request->hasFile('attachment')) {
-            // Delete old attachment if exists
-            if ($logBook->attachment_path) {
-                Storage::disk('public')->delete($logBook->attachment_path);
+            // Delete old file if exists
+            if ($logbook->attachment_path && Storage::disk('public')->exists($logbook->attachment_path)) {
+                Storage::disk('public')->delete($logbook->attachment_path);
             }
 
             $path = $request->file('attachment')->store('logbook_attachments', 'public');
             $validated['attachment_path'] = $path;
         }
 
-        $logBook->update($validated);
+        $logbook->update($validated);
 
         return response()->json([
             'message' => 'Log book entry updated successfully.',
-            'log_book' => $logBook,
-        ], 200);
+            'log_book' => $logbook,
+        ]);
     }
 
     public function destroy(Logbook $logbook)
