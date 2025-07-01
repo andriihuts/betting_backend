@@ -115,7 +115,7 @@ class LogBookController extends Controller
 
         $logbooks = $startDate != null ? Logbook::with(['hospital', 'procedure_type'])->where('procedure_date', '>=', $startDate->toDateString()) : Logbook::with(['hospital', 'procedure_type']);
 
-        if ($request->procedure_type_id && $request->procedure_type_id !== 'ALL') {
+        if ($request->procedure_type_id && $request->procedure_type_id !== 0 && $request->procedure_type_id !== '') {
             $logbooks->where('procedure_type_id', $request->procedure_type_id);
         }
 
