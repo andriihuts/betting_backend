@@ -8,6 +8,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\NewBetController;
 use App\Http\Controllers\SplitterController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\HospitalController;
+use App\Http\Controllers\ProcedureTypeController;
+use App\Http\Controllers\LogBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,3 +76,8 @@ Route::post('/splitters/store', [SplitterController::class, 'store']);  // regis
 //currency rate
 Route::get('/currency/rate', [CurrencyController::class, 'getCurrencyRate']);  // get currency rate
 Route::post('/currency_rate/{type}', [CurrencyController::class, 'update_rate']);  // update the currency rate
+
+//Logbook Routes
+Route::apiResource('logbooks', LogBookController::class);
+Route::apiResource('hospitals', HospitalController::class);
+Route::apiResource('procedure_types', ProcedureTypeController::class);
