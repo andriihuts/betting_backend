@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\DataController;
-use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
@@ -79,5 +77,10 @@ Route::post('/currency_rate/{type}', [CurrencyController::class, 'update_rate'])
 
 //Logbook Routes
 Route::apiResource('logbooks', LogBookController::class);
+Route::post('/logbooks/report/generate', [LogbookController::class, 'generateReport']);
+
+//Hospital Routes
 Route::apiResource('hospitals', HospitalController::class);
+
+//ProcedureType Routes
 Route::apiResource('procedure_types', ProcedureTypeController::class);

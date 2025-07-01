@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Logbook;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class LogBookController extends Controller
@@ -79,5 +81,60 @@ class LogBookController extends Controller
         return response()->json([
             'message' => 'Log book entry deleted successfully.',
         ], 200);
+    }
+
+    public function generateReport(Request $request)
+    {
+        $request->validate([
+            'time_range' => 'required|string',
+            'procedure_type_id' => 'nullable|integer',
+        ]);
+
+        // Time filtering
+        $now = Carbon::now();
+
+        switch ($request->time_range) {
+            case 'last_30_days':
+                $startDate = $now->copy()->subDays(30);
+                break;
+            case 'last_6_months':
+                $startDate = $now->copy()->subMonths(6);
+                break;
+            case 'last_year':
+                $startDate = $now->copy()->subYear();
+                break;
+            case 'all':
+                $startDate = Logbook::min('procedure_date');
+                if ($startDate) {
+                    $startDate = Carbon::parse($startDate);
+                }
+                break;
+            default:
+                return response()->json(['error' => 'Invalid time range'], 422);
+        }
+
+        $logbooks = $startDate != null ? Logbook::with(['hospital', 'procedure_type'])->where('procedure_date', '>=', $startDate->toDateString()) : Logbook::with(['hospital', 'procedure_type']);
+
+        if ($request->procedure_type_id && $request->procedure_type_id !== 'ALL') {
+            $logbooks->where('procedure_type_id', $request->procedure_type_id);
+        }
+
+        $logbooks = $logbooks->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.report', [
+            'logbooks' => $logbooks,
+            'from' => $startDate->format('M d, Y'),
+            'to' => $now->format('M d, Y'),
+        ]);
+
+        // Store PDF
+        $filename = 'logbook_report_' . now()->format('Ymd_His') . '.pdf';
+        Storage::disk('public')->put("reports/{$filename}", $pdf->output());
+
+        return response()->json([
+            'message' => 'PDF generated successfully.',
+            'file_path' => Storage::url("reports/{$filename}"),
+        ]);
     }
 }
