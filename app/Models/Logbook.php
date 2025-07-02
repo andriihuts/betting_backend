@@ -15,7 +15,6 @@ class Logbook extends Model
         'mrn',
         'dob',
         'procedure_date',
-        'procedure_type',
         'role',
         'notes',
         'attachment_path',
