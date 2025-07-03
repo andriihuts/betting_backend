@@ -42,42 +42,10 @@ class LogBookController extends Controller
             $validated['attachment_path'] = $filePath;
         }
 
-        // Handle base64 image upload
-        // if (!empty($validated['attachment'])) {
-        //     $base64 = $validated['attachment'];
-
-        //     // Match base64 pattern
-        //     if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
-        //         $base64 = substr($base64, strpos($base64, ',') + 1);
-        //         $type = strtolower($type[1]); // jpg, png, etc.
-
-        //         if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
-        //             return response()->json(['error' => 'Invalid image type.'], 422);
-        //         }
-
-        //         $base64 = base64_decode($base64);
-
-        //         if ($base64 === false) {
-        //             return response()->json(['error' => 'Base64 decode failed.'], 422);
-        //         }
-
-        //         $fileName = uniqid('attachment_') . '.' . $type;
-        //         $filePath = 'logbook_attachments/' . $fileName;
-        //         Storage::disk('public')->put($filePath, $base64);
-
-        //         $validated['attachment_path'] = $filePath;
-        //     } else {
-        //         return response()->json(['error' => 'Invalid base64 image format.'], 422);
-        //     }
-
-        //     // Remove raw base64 from validated data
-        //     unset($validated['attachment']);
-        // }
-
         $logBook = LogBook::create($validated);
 
         return response()->json([
-            'message' => 'Log book entry created successfully.',
+            'message' => 'Logbook entry created successfully.',
             'log_book' => $logBook,
         ], 201);
     }
@@ -119,43 +87,10 @@ class LogBookController extends Controller
             $validated['attachment_path'] = $filePath;
         }
 
-        // if (!empty($validated['attachment'])) {
-        //     $base64 = $validated['attachment'];
-
-        //     if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
-        //         $base64 = substr($base64, strpos($base64, ',') + 1);
-        //         $type = strtolower($type[1]);
-
-        //         if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
-        //             return response()->json(['error' => 'Invalid image type.'], 422);
-        //         }
-
-        //         $base64 = base64_decode($base64);
-        //         if ($base64 === false) {
-        //             return response()->json(['error' => 'Base64 decode failed.'], 422);
-        //         }
-
-        //         // Delete old file if it exists
-        //         if ($logbook->attachment_path && Storage::disk('public')->exists($logbook->attachment_path)) {
-        //             Storage::disk('public')->delete($logbook->attachment_path);
-        //         }
-
-        //         $fileName = uniqid('attachment_') . '.' . $type;
-        //         $filePath = 'logbook_attachments/' . $fileName;
-        //         Storage::disk('public')->put($filePath, $base64);
-
-        //         $validated['attachment_path'] = $filePath;
-        //     } else {
-        //         return response()->json(['error' => 'Invalid base64 image format.'], 422);
-        //     }
-
-        //     unset($validated['attachment']);
-        // }
-
         $logbook->update($validated);
 
         return response()->json([
-            'message' => 'Log book entry updated successfully.',
+            'message' => 'Logbook entry updated successfully.',
             'log_book' => $logbook,
         ]);
     }
