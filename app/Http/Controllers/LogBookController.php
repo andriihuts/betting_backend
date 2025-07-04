@@ -140,13 +140,22 @@ class LogBookController extends Controller
                 return response()->json(['error' => 'Invalid time range'], 422);
         }
 
-        $logbooks = $startDate != null ? Logbook::with(['hospital', 'procedure_type'])->where('procedure_date', '>=', $startDate->toDateString()) : Logbook::with(['hospital', 'procedure_type']);
+        $logbooks = $startDate != null
+            ? Logbook::with(['hospital', 'procedure_type'])
+                ->where('procedure_date', '>=', $startDate->toDateString())
+            : Logbook::with(['hospital', 'procedure_type']);
 
         if ($request->procedure_type_id && $request->procedure_type_id !== 0 && $request->procedure_type_id !== '') {
             $logbooks->where('procedure_type_id', $request->procedure_type_id);
         }
 
         $logbooks = $logbooks->get();
+
+        // Delete existing PDF files in storage/app/public/reports
+        $reportFiles = Storage::disk('public')->files('reports');
+        foreach ($reportFiles as $file) {
+            Storage::disk('public')->delete($file);
+        }
 
         // Generate PDF
         $pdf = Pdf::loadView('pdf.report', [
@@ -164,4 +173,5 @@ class LogBookController extends Controller
             'file_path' => Storage::url("reports/{$filename}"),
         ]);
     }
+
 }

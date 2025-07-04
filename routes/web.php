@@ -12,6 +12,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\Frontend\TabController;
 use App\Http\Controllers\Frontend\PaymentController;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Log;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -92,4 +93,20 @@ Route::middleware(['auth'])->group(function () {
         // File Upload
         Route::post('/upload', [FileController::class, 'upload'])->name('upload');
     });
+});
+
+Route::get('/storage/logbook_attachments/{filename}', function ($filename) {
+    $path = storage_path("app/public/logbook_attachments/{$filename}");
+
+    if (!file_exists($path)) {
+        Log::warning("File not found: $path");
+        abort(404);
+    }
+
+    $size = filesize($path);
+    Log::info("Serving file $path ($size bytes)");
+
+    return response()->file($path, [
+        'Content-Length' => $size,
+    ]);
 });
