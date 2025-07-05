@@ -13,7 +13,7 @@ class LogBookController extends Controller
 {
     public function index()
     {
-        $logbooks = Logbook::with(['hospital', 'procedure_type'])->get();
+        $logbooks = Logbook::with(['hospital', 'procedure_type', 'images'])->get();
         return response()->json(['log_books' => $logbooks], 200);
     }
 
@@ -58,13 +58,13 @@ class LogBookController extends Controller
 
         return response()->json([
             'message' => 'Logbook entry created successfully.',
-            'log_book' => $logBook->load('images')->load('hospital')->load('procedure_type'),
+            'log_book' => $logBook->load(['hospital', 'procedure_type', 'images'])
         ], 201);
     }
 
     public function show(Logbook $logbook)
     {
-        $logbook->load(['hospital', 'procedure_type']);
+        $logbook->load(['hospital', 'procedure_type', 'images']);
         return response()->json(['log_book' => $logbook], 200);
     }
 
@@ -123,7 +123,7 @@ class LogBookController extends Controller
 
         return response()->json([
             'message' => 'Logbook entry updated successfully.',
-            'log_book' => $logbook->load('images')->load('hospital')->load('procedure_type'),
+            'log_book' => $logbook->load(['hospital', 'procedure_type', 'images'])
         ]);
     }
 
