@@ -7,6 +7,7 @@ use App\Http\Controllers\NewBetController;
 use App\Http\Controllers\SplitterController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\HospitalController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProcedureTypeController;
 use App\Http\Controllers\LogBookController;
 
@@ -84,3 +85,6 @@ Route::apiResource('hospitals', HospitalController::class);
 
 //ProcedureType Routes
 Route::apiResource('procedure_types', ProcedureTypeController::class);
+
+//Image Routes
+Route::apiResource('images', ImageController::class);
