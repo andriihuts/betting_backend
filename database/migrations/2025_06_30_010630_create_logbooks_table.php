@@ -19,11 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('hospital_id');
             $table->string('patient_name');
             $table->string('mrn')->nullable();
-            $table->date('dob')->nullable();
+            $table->string('dob')->nullable();
             $table->date('procedure_date')->nullable();
             $table->enum('role', ['Operator', 'First Assistant'])->default('Operator');
             $table->text('notes')->nullable();
-            $table->string('attachment_path')->nullable();
             $table->timestamps();
         });
     }

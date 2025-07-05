@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Image;
 use App\Models\Logbook;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -18,35 +19,46 @@ class LogBookController extends Controller
 
     public function store(Request $request)
     {
+        // Step 1: Validate request data
         $validated = $request->validate([
             'patient_name' => 'required|string|max:255',
-            'mrn' => 'required|string|max:255',
-            'dob' => 'required|date',
+            'mrn' => 'nullable|string|max:255',
+            'dob' => 'nullable|string|max:255',
             'procedure_date' => 'required|date',
             'role' => 'required|string|max:255',
             'notes' => 'nullable|string',
             'procedure_type_id' => 'required|integer|exists:procedure_types,id',
             'hospital_id' => 'required|integer|exists:hospitals,id',
-            'attachment' => 'nullable',
+            'attachment' => 'nullable|array',
+            'attachment.*' => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
-        
-        
-        // Handle image file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $extension = $file->getClientOriginalExtension();
-            $filename = uniqid('attachment_');
-            $filename = str_replace(' ', '', $filename) . '.' . $extension;
-        
-            $filePath = $file->storeAs('logbook_attachments', $filename, 'public'); // stored in storage/app/public/logbook_attachments
-            $validated['attachment_path'] = $filePath;
-        }
 
+        // Step 2: Create the logbook record
         $logBook = LogBook::create($validated);
+
+        // Step 3: Handle multiple file uploads if present
+        if ($request->hasFile('attachment')) {
+            foreach ($request->file('attachment') as $file) {
+                if ($file->isValid()) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = uniqid('attachment_') . '.' . $extension;
+                    $filename = str_replace(' ', '', $filename);
+
+                    // Save the file in the public disk
+                    $filePath = $file->storeAs('logbook_attachments', $filename, 'public');
+
+                    // Create a related image record
+                    Image::create([
+                        'logbook_id' => $logBook->id,
+                        'image_url' => $filePath,
+                    ]);
+                }
+            }
+        }
 
         return response()->json([
             'message' => 'Logbook entry created successfully.',
-            'log_book' => $logBook,
+            'log_book' => $logBook->load('images')->load('hospital')->load('procedure_type'),
         ], 201);
     }
 
@@ -58,40 +70,60 @@ class LogBookController extends Controller
 
     public function update(Request $request, LogBook $logbook)
     {
+        // Step 1: Validate input
         $validated = $request->validate([
             'patient_name' => 'sometimes|required|string|max:255',
-            'mrn' => 'sometimes|required|string|max:255',
-            'dob' => 'sometimes|required|date',
+            'mrn' => 'nullable|string|max:255',
+            'dob' => 'nullable|string|max:255',
             'procedure_date' => 'sometimes|required|date',
             'role' => 'sometimes|required|string|max:255',
             'notes' => 'nullable|string',
             'procedure_type_id' => 'sometimes|required|integer|exists:procedure_types,id',
             'hospital_id' => 'sometimes|required|integer|exists:hospitals,id',
-            'attachment' => 'nullable',
+            'attachment' => 'nullable|array',
+            'attachment.*' => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
-        // Handle image file upload
+        // Step 2: Handle new file uploads (append to existing images)
         if ($request->hasFile('attachment')) {
+            // If you want to delete all old images and replace with new
+            $logbook->images()->each(function ($image) {
+                Storage::disk('public')->delete($image->image_url);
+                $image->delete();
+            });
 
-            // Delete old file if it exists
-            if ($logbook->attachment_path && Storage::disk('public')->exists($logbook->attachment_path)) {
-                Storage::disk('public')->delete($logbook->attachment_path);
+            foreach ($request->file('attachment') as $file) {
+                if ($file->isValid()) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = uniqid('attachment_') . '.' . $extension;
+                    $filename = str_replace(' ', '', $filename);
+
+                    $filePath = $file->storeAs('logbook_attachments', $filename, 'public');
+
+                    // Store new image in DB
+                    Image::create([
+                        'logbook_id' => $logbook->id,
+                        'image_url' => $filePath,
+                    ]);
+                }
             }
-
-            $file = $request->file('attachment');
-            $extension = $file->getClientOriginalExtension();
-            $filename = uniqid('attachment_');
-            $filename = str_replace(' ', '', $filename) . '.' . $extension;
-        
-            $filePath = $file->storeAs('logbook_attachments', $filename, 'public'); // stored in storage/app/public/logbook_attachments
-            $validated['attachment_path'] = $filePath;
         }
 
-        $logbook->update($validated);
+        // Step 3: Prevent empty update
+        if (empty($validated)) {
+            return response()->json([
+                'message' => 'No data provided to update.',
+            ], 422);
+        }
+
+        // Step 4: Update fields
+        if (!empty($validated)) {
+            $logbook->update($validated);
+        }
 
         return response()->json([
             'message' => 'Logbook entry updated successfully.',
-            'log_book' => $logbook,
+            'log_book' => $logbook->load('images')->load('hospital')->load('procedure_type'),
         ]);
     }
 
@@ -99,9 +131,10 @@ class LogBookController extends Controller
     public function destroy(Logbook $logbook)
     {
         // Delete file if exists
-        if ($logbook->attachment_path) {
-            Storage::disk('public')->delete($logbook->attachment_path);
-        }
+        $logbook->images()->each(function ($image) {
+            Storage::disk('public')->delete($image->image_url);
+            $image->delete();
+        });
 
         $logbook->delete();
 

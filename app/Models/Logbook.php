@@ -17,13 +17,11 @@ class Logbook extends Model
         'procedure_date',
         'role',
         'notes',
-        'attachment_path',
         'procedure_type_id',
         'hospital_id',
     ];
 
     protected $casts = [
-        'dob' => 'date',
         'procedure_date' => 'date',
     ];
     
@@ -37,12 +35,12 @@ class Logbook extends Model
         return $this->belongsTo(ProcedureType::class);
     }
 
-    public function getProcedureDateAttribute($value)
+    public function images()
     {
-        return Carbon::parse($value)->format('d/m/Y');
+        return $this->hasMany(Image::class);
     }
 
-    public function getDobAttribute($value)
+    public function getProcedureDateAttribute($value)
     {
         return Carbon::parse($value)->format('d/m/Y');
     }
