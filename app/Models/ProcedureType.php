@@ -12,4 +12,9 @@ class ProcedureType extends Model
     protected $fillable = [
         'procedure_type',
     ];
+
+    public function logbooks()
+    {
+        return $this->hasMany(Logbook::class);
+    }
 }

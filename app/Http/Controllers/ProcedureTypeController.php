@@ -63,6 +63,13 @@ class ProcedureTypeController extends Controller
      */
     public function destroy(ProcedureType $procedureType)
     {
+        // Check if any logbook entries are using this procedure type
+        if ($procedureType->logbooks()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete. This procedure type is used in one or more logbook entries.',
+            ], 400); // 400 Bad Request or 409 Conflict
+        }
+
         $procedureType->delete();
 
         return response()->json([

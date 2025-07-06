@@ -63,6 +63,13 @@ class HospitalController extends Controller
      */
     public function destroy(Hospital $hospital)
     {
+        // Check if any logbook entries are using this hospital
+        if ($hospital->logbooks()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete. This hospital is used in one or more logbook entries.',
+            ], 400); // 400 Bad Request or 409 Conflict
+        }
+        
         $hospital->delete();
 
         return response()->json([
