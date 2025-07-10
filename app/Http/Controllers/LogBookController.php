@@ -110,7 +110,7 @@ class LogBookController extends Controller
             $logbooks->where('procedure_type_id', $validated['procedure_type_id']);
         }
 
-        $logbooks = $logbooks->orderBy('procedure_date', 'asc')->get();
+        $logbooks = $logbooks->orderBy('procedure_date', 'desc')->get();
 
         // Delete existing PDF files in storage/app/public/reports
         $reportFiles = Storage::disk('public')->files('reports');
