@@ -135,4 +135,31 @@ class LogBookController extends Controller
         ]);
     }
 
+    public function generateReportById(Request $request, $logbook_id)
+    {
+        // Fetch the logbook with related models
+        $logbook = Logbook::with(['hospital', 'procedure_type', 'images'])
+                        ->findOrFail($logbook_id);
+
+        // Optional: Clear only old PDF files (optional, may not be ideal in production)
+        $reportFiles = Storage::disk('public')->files('reports');
+        foreach ($reportFiles as $file) {
+            Storage::disk('public')->delete($file);
+        }
+
+        // Generate the PDF
+        $pdf = Pdf::loadView('pdf.single', [
+            'logbook' => $logbook
+        ]);
+
+        // Store the file
+        $filename = 'logbook_report_' . now()->format('Ymd_His') . '.pdf';
+        Storage::disk('public')->put("reports/{$filename}", $pdf->output());
+
+        return response()->json([
+            'message' => 'PDF generated successfully.',
+            'file_path' => Storage::url("reports/{$filename}"),
+        ]);
+    }
+
 }

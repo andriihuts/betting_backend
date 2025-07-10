@@ -78,6 +78,7 @@ Route::post('/currency_rate/{type}', [CurrencyController::class, 'update_rate'])
 
 //Logbook Routes
 Route::apiResource('logbooks', LogBookController::class);
+Route::get('/logbooks/report/{logbook_id}', [LogbookController::class, 'generateReportById']);
 Route::post('/logbooks/report/generate', [LogbookController::class, 'generateReport']);
 
 //Hospital Routes
