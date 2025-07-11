@@ -43,18 +43,23 @@
             <span>{{ $logbook->hospital->hospital_name ?? 'N/A' }}</span>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 40px; align-items: center;">
+        <div style="margin-bottom: 12px;">
+            <strong>Notes:</strong>
+            <span>{{ $logbook->notes ?? 'N/A' }}</span>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 40px; align-items: center; width: 100%;">
             @foreach ($logbook->images as $image)
                 @php
                     $imagePath = public_path('storage/' . $image->image_url);
                 @endphp
 
                 @if (file_exists($imagePath))
-                    <div style="padding: 6px; margin-bottom: 10px; margin: auto; align-self: center;">
+                    <div style="padding: 6px; margin-bottom: 10px; margin: auto; align-self: center; width: 100%;">
                         <img 
                             src="{{ $imagePath }}" 
                             alt="Image"
-                            style="width: 150px; height: auto; display: block;"
+                            style="width: 150px; height: auto; display: block; width: 100%; max-width: 600px;"
                         />
                     </div>
                 @endif
