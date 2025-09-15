@@ -132,6 +132,7 @@
                         <td>
                           <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                             <span class="badge badge-success badge-sm my-auto ms-auto me-3">${{$splitter['amount']}}</span>
+                            <span class="badge badge-success badge-sm my-auto me-3">lose: ${{$splitter['amount'] * ($active_json_data['odds'] - 1)}}</span>
                           </div>
                         </td>
                       </tr> 
