@@ -39,7 +39,7 @@
           </div>
           <div class="col-auto my-auto">
             <div class="h-100">
-              <h5 class="mb-1"> Active Bet </h5>              
+              <h5 class="mb-1"> Active Bet -  Total Risk: ${{$totalRisk}}</h5>              
             </div>
           </div>          
         </div>
@@ -62,13 +62,16 @@
                     <th data-sortable="" style="width: 16.382%;" class="">
                       <a href="#" class="dataTable-sorter">Date</a>
                     </th>
-                    <th data-sortable="" style="width: 16.382%;" class="">
+                    <th data-sortable="" style="width: 14.382%;" class="">
                       <a href="#" class="dataTable-sorter">Slip</a>
                     </th>
                     <th data-sortable="" style="width: 10.0658%;" class="">
                       <a href="#" class="dataTable-sorter">Amount</a>
                     </th>
-                    <th data-sortable="" style="width: 19.6711%;" class="">
+                    <th data-sortable="" style="width: 10.0658%;" class="">
+                      <a href="#" class="dataTable-sorter">Risk</a>
+                    </th>
+                    <th data-sortable="" style="width: 9.1111%;" class="">
                       <a href="#" class="dataTable-sorter">Currency</a>
                     </th>
                     <th data-sortable="" style="width: 10.3909%;" class="">
@@ -109,6 +112,11 @@
                       <td class="text-lg font-weight-bold">
                         <div class="d-flex align-items-center">
                           <span>{{$bet_one['amount']}}</span>
+                        </div>
+                      </td>
+                      <td class="text-lg font-weight-bold">
+                        <div class="d-flex align-items-center">
+                          <span>{{$bet_one['risk']}}</span>
                         </div>
                       </td>
                       <td class="text-lg font-weight-bold">

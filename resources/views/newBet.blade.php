@@ -268,7 +268,7 @@
                 });
             }
         });
-        console.log('splitters datae', splitters);
+
         // Validate required fields
         if (!slip || !odds || !amount || !currency) {
             Swal.fire({

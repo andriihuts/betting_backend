@@ -128,7 +128,7 @@ class NewBetController extends Controller
             $all_active_Bets = NewBet::whereIn('status', [0,1])->orderBy('updated_at', 'desc')->get();
 
         $active_json_data = [];
-
+        $totalRisk = 0;
         foreach ($all_active_Bets as $key => $active_bet) {
             // Calculate total amount for all splitters of the bet
             $splitter_amount_total = $active_bet->bet_splitters->sum('amount');
@@ -145,10 +145,13 @@ class NewBetController extends Controller
             };
 
             // Prepare splitter data
-             $splitter_data = $active_bet->bet_splitters->map(fn($splitter) => [
+            $splitter_data = $active_bet->bet_splitters->map(fn($splitter) => [
                 'name' => optional($splitter->customer)->name ?? 'unknown',
                 'amount' => $splitter->amount,
             ]);
+
+            $risk = $active_bet->bet_splitters->sum('amount') * (round($active_bet->odds, 2) - 1);
+            $totalRisk += $risk;
 
             // Build the active bet data
             $active_json_data[$key] = [
@@ -157,6 +160,7 @@ class NewBetController extends Controller
                 'odds' => round($active_bet->odds, 2),
                 'live' => (int)$active_bet->live,
                 'amount' => $active_bet->amount,
+                'risk' => $risk,
                 'customer_name' => optional($active_bet->customer)->name ?? 'unknown customer',
                 'currency' => $active_bet->currency,
                 'created_at' => $active_bet->created_at,
@@ -167,9 +171,9 @@ class NewBetController extends Controller
 
         //return response()->json([$active_json_data]);
         if($bet_type == 3) {
-            return view('activeBet', compact('active_json_data'));
+            return view('activeBet', compact('active_json_data', 'totalRisk'));
         }else{
-            return view('settledBets', compact('active_json_data'));
+            return view('settledBets', compact('active_json_data', 'totalRisk'));
         }        
     }    
 
@@ -198,15 +202,17 @@ class NewBetController extends Controller
             !$singBet->live && $singBet->status == 0 => round(($real_amount * ($singBet->odds - 1)) * -1 * $multiplier, 2), // lose
             default => 0,
         };
+
         $splitter_data = $singBet->bet_splitters->map(function($splitter) {
             $customer = \App\Models\Customer::find($splitter->customer_id);
-            
             return [
                 'name' => $customer ? $customer->name : 'unknown',
                 'amount' => $splitter->amount,
                 'customer_id' => $splitter->customer_id,
             ];
         });
+
+        $totalLoseAmount = $singBet->bet_splitters->sum('amount');
 
         // Build response data
         $active_json_data = [
@@ -216,6 +222,7 @@ class NewBetController extends Controller
             'live' => (int)$singBet->live,
             'status' => (int)$singBet->status,
             'amount' => $singBet->amount,
+            'totalLoseAmount' => $totalLoseAmount,
             'customer_name' => optional($singBet->customer)->name ?? 'unknown customer',
             'currency' => $singBet->currency,
             'notes' => $singBet->notes,

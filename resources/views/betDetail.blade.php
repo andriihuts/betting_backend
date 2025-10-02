@@ -75,8 +75,9 @@
                       <td>
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">${{$active_json_data['amount']}}</span>
+                          <span class="badge badge-success badge-sm my-auto me-3">lose: ${{($active_json_data['amount'] - $active_json_data['totalLoseAmount']) * ($active_json_data['odds'] - 1)}}</span>
                         </div>
-                      </td>                      
+                      </td>
                     </tr>
                     <tr>
                       <td class="ps-1" colspan="4">

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('splitters')->comment('splitter user group')->nullable(true);
             $table->tinyInteger('status')->comment('status 1:win, 0:lose, 2:void')->nullable(true);
             $table->tinyInteger('bsplitter')->comment('user is splitter or not')->nullable(true)->default(1);
-            $table->multiLineString('notes')->comment('note')->nullable(true); 
+            $table->longText('notes')->comment('note')->nullable(true); 
             $table->softDeletes($column = 'deleted_at', $precision = 0);
             $table->timestamps();
         });
