@@ -150,8 +150,10 @@ class NewBetController extends Controller
                 'amount' => $splitter->amount,
             ]);
 
-            $risk = $active_bet->bet_splitters->sum('amount') * (round($active_bet->odds, 2) - 1);
-            $totalRisk += $risk;
+            $risk = ($active_bet->amount - $active_bet->bet_splitters->sum('amount')) * (round($active_bet->odds, 2) - 1);
+            if($active_bet->currency == 'b-(bitcoin)' || $active_bet->currency == 'a-(applepay)'){
+                $totalRisk += $risk;
+            }
 
             // Build the active bet data
             $active_json_data[$key] = [
