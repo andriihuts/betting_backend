@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\NetIRC;
 use App\Models\Coin;
+use App\Models\NewBet;
 use App\Models\Website;
 use Illuminate\Support\Facades\DB;
 
@@ -194,6 +195,18 @@ class HomeController extends Controller
             $dailyDataFormatted['data'][] = $netToday ?? 0;
         }
 
-        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'weeklyDataFormatted', 'dailyDataFormatted'));
+        // Fetch bets with related data using eager loading
+        $all_active_Bets = NewBet::where('status', 3)->orderBy('updated_at', 'desc')->get();
+
+        $active_json_data = [];
+        $totalRisk = 0;
+        foreach ($all_active_Bets as $key => $active_bet) {
+            $risk = ($active_bet->amount - $active_bet->bet_splitters->sum('amount')) * (round($active_bet->odds, 2) - 1);
+            if($active_bet->currency == 'b-(bitcoin)' || $active_bet->currency == 'a-(applepay)'){
+                $totalRisk += $risk;
+            }
+        }
+
+        return view('dashboard', compact('customer', 'total', 'net', 'irc', 'all_coins', 'all_websites', 'yearlyDataFormatted', 'monthlyDataFormatted', 'weeklyDataFormatted', 'dailyDataFormatted', 'totalRisk'));
     }
 }

@@ -106,7 +106,7 @@
                     </div>
                   </div>
                   <div class="button-row d-flex mt-4 d-flex align-items-center justify-content-center">
-                    <button class="btn bg-gradient-primary js-btn-next" type="button" title="Next">Register</button>
+                    <button class="btn bg-gradient-primary js-btn-next" type="button" title="Next">Update</button>
                   </div>
                 </div>
               </div>                      
@@ -253,10 +253,10 @@
           // Confirmation prompt
           Swal.fire({
               title: 'Are you sure?',
-              text: 'You are about to register a new bet.',
+              text: 'You are about to update a bet.',
               icon: 'warning',
               showCancelButton: true,
-              confirmButtonText: 'Yes, register it!',
+              confirmButtonText: 'Yes, update it!',
               cancelButtonText: 'Cancel',
           }).then((result) => {
               if (result.isConfirmed) {
