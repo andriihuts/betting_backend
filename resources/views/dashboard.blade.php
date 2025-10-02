@@ -100,7 +100,7 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">TOTAL LOSE</p>
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">TOTAL RISK</p>
                                 <h5 class="font-weight-bolder mb-0">
                                     {{ $totalRisk }}
                                 </h5>

@@ -112,15 +112,37 @@
                       </td>
 
                       <!-- Content cell -->
-                      <td style="width: 100%;">
-                        <div class="mb-0 d-flex align-items-center justify-content-end me-3">
+                      <td style="width: 100%; position: relative;">
                         @if(!empty($active_json_data['notes']))
-                          <div class="p-2 badge-success badge-sm my-auto ms-auto"
-                              style="max-width: 100%; white-space: normal; word-break: break-word; overflow-wrap: anywhere; text-align: left; border-radius: 10px;">
-                              {{ $active_json_data['notes'] }}
-                          </div>
+                            @php
+                                $note = $active_json_data['notes'];
+                            @endphp
+
+                            @if(filter_var($note, FILTER_VALIDATE_URL))
+                            <div class="mb-0 d-flex flex-column align-items-center me-3">
+                              <!-- URL as image -->
+                              <div class="d-flex flex-column align-items-center justify-content-center gap-2 position-relative text-center">
+                                  <img src="{{ $note }}" alt="note image" style="max-width: 60%; border-radius: 10px;">
+                                  <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('{{ $note }}', this)">
+                                      Copy to clipboard
+                                  </button>
+                              </div>
+                            </div>
+                            @else
+                            <div class="mb-0 d-flex flex-column align-items-end me-3">
+                              <!-- Text -->
+                              <div class="d-flex flex-column align-items-end gap-2 position-relative">
+                                  <div class="p-2 badge-success badge-sm my-auto ms-auto"
+                                      style="max-width: 100%; white-space: normal; word-break: break-word; overflow-wrap: anywhere; text-align: left; border-radius: 10px;">
+                                      {{ $note }}
+                                  </div>
+                                  <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('{{ $note }}', this)">
+                                      Copy to clipboard
+                                  </button>
+                              </div>
+                            </div>
+                            @endif
                         @endif
-                        </div>
                       </td>
                     </tr>
                   </tbody>
@@ -170,7 +192,37 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @parent
+<!-- Notification script -->
 <script>
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      // Create notification element
+      const notification = document.createElement('span');
+      notification.innerText = 'Copied!';
+      notification.style.position = 'absolute';
+      notification.style.background = '#19875488'; // green
+      notification.style.color = 'white';
+      notification.style.padding = '2px 6px';
+      notification.style.borderRadius = '4px';
+      notification.style.fontSize = '12px';
+      notification.style.bottom = btn.offsetHeight + 8 + 'px'; // above the button
+      notification.style.left = '50%';
+      notification.style.transform = 'translateX(-50%)';
+      notification.style.zIndex = '9999';
+      notification.style.transition = 'opacity 0.3s';
+      notification.style.opacity = '1';
+
+      // Append to button's parent so it stays aligned
+      btn.parentElement.appendChild(notification);
+
+      // Fade out and remove after 1.5s
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 1500);
+    });
+  }
+
   $(document).ready(function () {
       // Event handlers for Win, Lose, and Void buttons
       $('.btn_win, .btn_lose, .btn_void').on('click', function () {
