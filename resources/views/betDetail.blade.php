@@ -122,7 +122,7 @@
                             <div class="mb-0 d-flex flex-column align-items-center me-3">
                               <!-- URL as image -->
                               <div class="d-flex flex-column align-items-center justify-content-center gap-2 position-relative text-center">
-                                  <img src="{{ $note }}" alt="note image" style="max-width: 60%; border-radius: 10px;">
+                                  <img src="{{ $note }}" alt="note image" style="max-width: 30%; border-radius: 10px;">
                                   <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('{{ $note }}', this)">
                                       Copy to clipboard
                                   </button>
