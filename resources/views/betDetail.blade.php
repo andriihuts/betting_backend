@@ -40,39 +40,39 @@
           <div class="row">
             <div class="col-lg-12 m-auto">
               <div class="table-responsive">
-                <table class="table mb-0">                  
+                <table class="table mb-0">
                   <tbody>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <td class="ps-1" style="width: 120px; white-space: nowrap;">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">Name</h4>                          
                         </div>
                       </td>
-                      <td>
+                      <td style="width: 100%;">
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">{{$active_json_data['customer_name']}}</span>
                         </div>
                       </td>
                     </tr>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <td class="ps-1" style="width: 120px; white-space: nowrap;">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">Slip</h4>                          
                         </div>
                       </td>
-                      <td>
+                      <td style="width: 100%;">
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">{{$active_json_data['slip']}}</span>
                         </div>
                       </td>
                     </tr>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <td class="ps-1">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">Amount</h4>                          
                         </div>
                       </td>
-                      <td>
+                      <td style="width: 100%;" style="width: 120px; white-space: nowrap;">
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">${{$active_json_data['amount']}}</span>
                           <span class="badge badge-success badge-sm my-auto me-3">lose: ${{($active_json_data['amount'] - $active_json_data['totalLoseAmount']) * ($active_json_data['odds'] - 1)}}</span>
@@ -80,43 +80,51 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <td class="ps-1" style="width: 120px; white-space: nowrap;">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">currency</h4>                          
                         </div>
                       </td>
-                      <td>
+                      <td style="width: 100%;">
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">{{$active_json_data['currency']}}</span>
                         </div>
                       </td>                      
                     </tr>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <td class="ps-1" style="width: 120px; white-space: nowrap;">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">Odds</h4>                          
                         </div>
                       </td>
-                      <td>
+                      <td style="width: 100%;">
                         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
                           <span class="badge badge-success badge-sm my-auto ms-auto me-3">{{$active_json_data['odds']}}</span>
                         </div>
                       </td>                                           
                     </tr>
                     <tr>
-                      <td class="ps-1" colspan="4">
+                      <!-- Label cell -->
+                      <td class="ps-1" style="width: 120px; white-space: nowrap;">
                         <div class="my-auto">
                           <h4 class="text-dark d-block text-sm">Note</h4>                          
                         </div>
                       </td>
-                      <td>
-                        <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
-                          <span class="badge badge-success badge-sm my-auto ms-auto me-3">{{$active_json_data['notes']}}</span>
+
+                      <!-- Content cell -->
+                      <td style="width: 100%;">
+                        <div class="mb-0 d-flex align-items-center justify-content-end me-3">
+                        @if(!empty($active_json_data['notes']))
+                          <div class="p-2 badge-success badge-sm my-auto ms-auto"
+                              style="max-width: 100%; white-space: normal; word-break: break-word; overflow-wrap: anywhere; text-align: left; border-radius: 10px;">
+                              {{ $active_json_data['notes'] }}
+                          </div>
+                        @endif
                         </div>
-                      </td>                                           
+                      </td>
                     </tr>
                   </tbody>
-                </table>                
+                </table>
               </div>
               <h5 class="pt-3">Splitters Users</h5>
               <p class="text-sm">You can see the detailed splitter users information here.</p>
@@ -125,7 +133,7 @@
                   <tbody>
                     @foreach ($active_json_data['arrSplitters'] as $splitter)    
                       <tr>
-                        <td class="ps-1" colspan="4">
+                        <td class="ps-1">
                           <div class="my-auto">
                             <h4 class="text-dark d-block text-sm">{{$splitter['name']}}</h4>                          
                           </div>
